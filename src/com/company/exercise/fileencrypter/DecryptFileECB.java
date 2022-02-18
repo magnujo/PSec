@@ -9,7 +9,7 @@ public class DecryptFileECB {
         DecryptFileECB d = new DecryptFileECB();
         d.decrypt();
     }
-    String dir = "files";
+    String dir = "src/com/company/exercise/files";
     String mr = "VeryConfidential";
     String plaintextFileName = dir + "/" + mr + "." + "pdf",
             testFile = dir + "/" + mr + "." + "test" + "." + "pdf";
@@ -18,11 +18,13 @@ public class DecryptFileECB {
         try {
             // Reading
             byte[] input = library.FileUtil.readAllBytes(
-                    plaintextFileName); // Decrypting
+                    plaintextFileName);
+            // Decrypting
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding", "BC");
             SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
             cipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] output = cipher.doFinal(input); // Writing
+            byte[] output = cipher.doFinal(input);
+            // Writing
             library.FileUtil.write("AES/ECB/PKCS5Padding", testFile, output);
         } catch (Exception e) { e.printStackTrace();
         }

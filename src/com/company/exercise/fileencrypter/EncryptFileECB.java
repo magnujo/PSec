@@ -11,7 +11,8 @@ public class EncryptFileECB {
         EncryptFileECB e = new EncryptFileECB();
         e.encrypt();
     }
-    String dir = "files";
+    //String dir = "files";
+    String dir = "src/com/company/exercise/files";
     String plaintextFileName = dir + "/" + "VeryConfidential.pdf";
     byte[] keyBytes = Hex.decode("000102030405060708090a0b0c0d0e0f");
     void encrypt() {
