@@ -25,6 +25,7 @@ public class FileUtil {
         }
         try {
             Files.write(Paths.get(outFile), output);
+            System.out.println(Paths.get(outFile));
             System.out.println("writing...");
         } catch (Exception e) { e.printStackTrace(); }
     }
