@@ -1,6 +1,4 @@
-package com.company.testers;
-
-import javafx.scene.Scene;
+package com.company.installationtests;
 
 class HelloJavaFX1 {
   public static void main(String args[]) {

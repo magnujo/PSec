@@ -1,5 +1,4 @@
-package com.company.testers;
-import org.bouncycastle.util.encoders.Hex;
+package com.company.installationtests;
 
 public class Main {
 

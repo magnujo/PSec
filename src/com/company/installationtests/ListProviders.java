@@ -1,4 +1,4 @@
-package com.company.testers;
+package com.company.installationtests;
 
 import java.security.Provider;
 import java.security.Security;

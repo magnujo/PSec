@@ -1,14 +1,15 @@
-package com.company.examples;
+package com.company.examples.chapter2;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.util.encoders.Hex;
 
 /**
- * A simple example of AES in ECB mode.
+ * A simple example of AES using CBC mode with Cipher Text Stealing used.
  */
-public class ECBShortExample
+public class CTSExample
 {
     public static void main(String[] args)
         throws Exception
@@ -17,22 +18,22 @@ public class ECBShortExample
 
         SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
 
-        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+        Cipher cipher = Cipher.getInstance("AES/CBC/CTSPadding", "BC");
 
-        byte[] input = Hex.decode("a0b1a2a3a4a5a6a7a0a1a2a3a4a5a6a7");
-      /*  byte[] input = {0b01010000, 0b01010000, 0b01010000, 0b01010000,
-                0b01010000, 0b01010000, 0b01010000, 0b01010000, 0b01010000,
-                0b01010000, 0b01010000, 0b01010000, 0b01010000, 0b01010000, 0b01010000};*/
+        byte[] input = Hex.decode("a0a1a2a3a4a5a6a7a0a1a2a3a4a5a6a7"
+                                + "a0a1a2a3a4a5a6a7a0");
 
         System.out.println("input    : " + Hex.toHexString(input));
 
-        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] iv = Hex.decode("9f741fdb5d8845bdb48a94394e84f8a3");
+
+        cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
 
         byte[] output = cipher.doFinal(input);
 
         System.out.println("encrypted: " + Hex.toHexString(output));
 
-        cipher.init(Cipher.DECRYPT_MODE, key);
+        cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
 
         System.out.println("decrypted: "
                             + Hex.toHexString(cipher.doFinal(output)));

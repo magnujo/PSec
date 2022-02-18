@@ -1,6 +1,4 @@
-package com.company.testers;
-
-import org.bouncycastle.util.encoders.Hex;
+package com.company.installationtests;
 
 class HelloBC {
 

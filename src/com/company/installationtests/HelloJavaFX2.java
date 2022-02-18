@@ -1,4 +1,4 @@
-package com.company.testers;
+package com.company.installationtests;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
