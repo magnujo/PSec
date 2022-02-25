@@ -2,8 +2,9 @@ package fileencrypter;
 
 import org.bouncycastle.util.encoders.Hex;
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
+import java.security.SecureRandom;
 
 
 public class EncryptFileECB {
@@ -17,6 +18,7 @@ public class EncryptFileECB {
     byte[] keyBytes = Hex.decode("000102030405060708090a0b0c0d0e0f");
     void encrypt() {
         try {
+
 // reading
             byte [] input = library.FileUtil.readAllBytes(plaintextFileName);
 // encrypting

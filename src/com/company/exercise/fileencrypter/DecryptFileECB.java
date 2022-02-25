@@ -17,15 +17,17 @@ public class DecryptFileECB {
     void decrypt() {
         try {
             // Reading
+            System.out.println(plaintextFileName);
             byte[] input = library.FileUtil.readAllBytes(
-                    plaintextFileName);
+                    plaintextFileName + "." + "aes");
+            System.out.println(input);
             // Decrypting
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding", "BC");
             SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] output = cipher.doFinal(input);
             // Writing
-            library.FileUtil.write("AES/ECB/PKCS5Padding", testFile, output);
+            //library.FileUtil.write("",testFile, output);
         } catch (Exception e) { e.printStackTrace();
         }
     }
