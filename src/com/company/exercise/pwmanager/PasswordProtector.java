@@ -1,12 +1,17 @@
 package com.company.exercise.pwmanager;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.bouncycastle.util.encoders.Hex;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class PasswordProtector {
     String passwordFileName;
     Cipher cipher;
-    SecretKeySpec key = .. // hardcoded
-    byte[] iv = .. // hardcoded
+    byte[] keyBytes = Hex.decode("000102030405060708090a0b0c0d0e0f");
+    SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+    byte[] iv =  Hex.decode("9f741fdb5d8845bdb48a94394e84f8a3");
 
     // initializa Cipher-object
     PasswordProtector(String passwordFileName) {
@@ -28,7 +33,9 @@ public class PasswordProtector {
     }
 
 
-    byte[] decrypt(byte[] input) {..}
+    byte[] decrypt(byte[] input) {
+
+    }
 
     // store() and encrypt()
     void store(PasswordTable pt) {

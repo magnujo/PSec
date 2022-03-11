@@ -18,8 +18,8 @@ class PasswordManager {
 
         // adding records agaig
         System.out.println("Adding two passwords records:");
-        pt.add(new PasswordRecord("Facebook", "facebook.com", ..));
-        pt.add(new PasswordRecord(..));
+        pt.add(new PasswordRecord("Facebook", "facebook.com", "fb_user", "fb_pw"));
+        pt.add(new PasswordRecord("YouTube", "youtube.com", "yt_user", "yt_pw"));
         pt.print();
         // storing table
         System.out.println("Storing password table");
