@@ -24,8 +24,8 @@ public class ComputeDigest {
             System.out.println("Hashvalue: " + Hex.toHexString(hashValue));
 
             // writing hash value to file
-            String hashFileName = plaintextFileName + "." + "sha256";
-            library.FileUtil.write("", hashFileName, hashValue);
+            String hashFileName = plaintextFileName;
+            library.FileUtil.write("sha256", hashFileName, hashValue);
         } catch (Exception e) { e.printStackTrace(); }
     }
 

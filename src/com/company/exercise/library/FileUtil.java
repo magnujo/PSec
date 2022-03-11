@@ -14,16 +14,35 @@ public class FileUtil {
         return bytesRead; // returns {} if file does not exist
     }
 
-    public static void write(String transformation,
-                             String plaintextFileName, byte[] output) {
+    public static void write(String algo_suffix, String plaintextFileName, byte[] output, String iv_suffix) {
+        String outFile = plaintextFileName + "." + algo_suffix + "." + iv_suffix;
+        try {
+            Files.write(Paths.get(outFile), output);
+            System.out.println(Paths.get(outFile));
+            System.out.println("writing...");
+        } catch (Exception e) { e.printStackTrace(); }
+    }
 
-        String outFile = "";
-        String[] parts = transformation.split("/");
-        if (parts.length == 3 && parts[0].equals("AES")) {
-            outFile = plaintextFileName + ".aes";
-            System.out.println("Aes");
-        }
-        else outFile = plaintextFileName;
+    public static void write(String algo_suffix, String plaintextFileName, byte[] output) {
+        String outFile = plaintextFileName + "." + algo_suffix;
+        try {
+            Files.write(Paths.get(outFile), output);
+            System.out.println(Paths.get(outFile));
+            System.out.println("writing...");
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public static void write(String plaintextFileName, byte[] output) {
+        String outFile = plaintextFileName;
+        try {
+            Files.write(Paths.get(outFile), output);
+            System.out.println(Paths.get(outFile));
+            System.out.println("writing...");
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public static void write(String plaintextFileName, byte[] output, String iv_suffix) {
+        String outFile = plaintextFileName + "." + iv_suffix;
         try {
             Files.write(Paths.get(outFile), output);
             System.out.println(Paths.get(outFile));
