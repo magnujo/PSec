@@ -6,10 +6,10 @@ import java.nio.file.Paths;
 public class FileUtil {
 
 
-    public static byte[] readAllBytes(String plaintextFileName) {
+    public static byte[] readAllBytes(String plaintextPath) {
         byte[] bytesRead = {};
         try {
-            bytesRead = Files.readAllBytes(Paths.get(plaintextFileName));
+            bytesRead = Files.readAllBytes(Paths.get(plaintextPath));
         } catch (Exception e) {}
         return bytesRead; // returns {} if file does not exist
     }
@@ -27,8 +27,8 @@ public class FileUtil {
         String outFile = plaintextFileName + "." + algo_suffix;
         try {
             Files.write(Paths.get(outFile), output);
-            System.out.println(Paths.get(outFile));
-            System.out.println("writing...");
+           // System.out.println(Paths.get(outFile));
+            System.out.println("writing to " + outFile);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -36,8 +36,8 @@ public class FileUtil {
         String outFile = plaintextFileName;
         try {
             Files.write(Paths.get(outFile), output);
-            System.out.println(Paths.get(outFile));
-            System.out.println("writing...");
+            System.out.println("writing to:   " + outFile);
+            //System.out.println("writing to:   " + Paths.get(outFile));
         } catch (Exception e) { e.printStackTrace(); }
     }
 

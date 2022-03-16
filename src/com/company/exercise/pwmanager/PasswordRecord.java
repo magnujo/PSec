@@ -12,7 +12,12 @@ class PasswordRecord implements Serializable {
         this.password = password;
     }
     //Methods?
-    public void printLabels(){
+    public void print(){
+        System.out.println("Site name: " + site);
+        System.out.println("URL: " + url);
+        System.out.println("Username: " + username);
+        System.out.println("Password: " + password);
+        System.out.println();
 
     }
 }
