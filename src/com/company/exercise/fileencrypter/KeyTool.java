@@ -1,8 +1,5 @@
 package com.company.exercise.fileencrypter;
 
-import com.company.exercise.pwmanager.PasswordTable;
-import org.apache.commons.lang3.SerializationUtils;
-
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,40 +10,36 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class KeyTool {
-    ArrayList<String> KeyPasswords;
-    String storePW;
-    String path = "src/com/company/exercise/fileencrypter/keystore.bks"
+    ArrayList<char[]> KeyPasswords;
+    char[] storePW;
+    String storePath = "src/com/company/exercise/fileencrypter/keystore.bks";
 
-    KeyTool(){
-        File f = new File(path);
+
+    public boolean fileCheck(){
+        File f = new File(storePath);
         if(f.isFile()) {
-            // ask for password to enter keystore
+            return true;// ask for password to enter keystore
         }
         else {
-            // ask to register password
+            return  false;   // ask to register password and create keystore
         }
-        this.KeyPasswords = new ArrayList<String>();
     }
 
     // should run first time program is run. (Look for file keystore.bks and if not found this should run):
-    public static KeyStore createKeyStore() {
+    public void createKeyStore(String storePW) {
+        this.storePW = storePW.toCharArray();
         KeyStore store = null;
         try {
-            Scanner scanner = new Scanner(System.in);
-
-            System.out.print("Enter new password for store:");
-            storePW = scanner.nextLine().toCharArray();
             store = KeyStore.getInstance("BKS", "BC");
             store.load(null, null);
         } catch (Exception e) { e.printStackTrace(); }
-        return store;
+        store(store);
     }
 
 
-    public static void generateAndAddKey(KeyStore store) {
+    public void generateAndAddKey(KeyStore store) {
         try {
             System.out.print("Enter new password for new secretkey:");
-            secretKeyPW = scanner.nextLine().toCharArray();
             // generating random bytes
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
             byte[] keyBytes = new byte[16];
@@ -55,38 +48,36 @@ public class KeyTool {
             SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
             // adding key to keystore
             KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
-            KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(secretKeyPW);
+            KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(KeyPasswords.get(0));
             store.setEntry("key", entry, protection);
 
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public static void store(KeyStore store, String path) {
+
+    public void store(KeyStore store) {
         try {
-            FileOutputStream fOut = new FileOutputStream(storeFileName);
+            FileOutputStream fOut = new FileOutputStream(storePath);
             store.store(fOut, storePW);
             fOut.close();
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public static KeyStore load(String path) {
+    public KeyStore load(String storePW) {
         KeyStore ks = null;
         try {
             // step (1)
             ks = KeyStore.getInstance("BKS", "BC");
             // step (2)
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Please type password to access the store:");
-            char[] pw = scanner.nextLine().toCharArray();
-            FileInputStream fis
-                    = new FileInputStream(storeFileName);
+            char[] pw = storePW.toCharArray();
+            FileInputStream fis = new FileInputStream(storePath);
             ks.load(fis, pw);
             fis.close();
         } catch (Exception e) { e.printStackTrace(); }
         return ks;
     }
 
-    public static SecretKeySpec getKey(String path) {
+    public SecretKeySpec getKey(String path) {
         SecretKeySpec key = null;
         try {
             KeyStore ks = load(path);
