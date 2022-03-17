@@ -1,33 +1,39 @@
-package com.company.exercise.keystore;
+package com.company.exercise.fileencrypter;
+
+import com.company.exercise.pwmanager.PasswordTable;
+import org.apache.commons.lang3.SerializationUtils;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
-import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.Scanner;
 
-public class MedicalKS {
+public class KeyTool {
+    ArrayList<String> KeyPasswords;
+    String storePW;
+    String path = "src/com/company/exercise/fileencrypter/keystore.bks"
 
-    static String dir = "src/com/company/exercise/keystore";
-    static String storeFileName = dir + "/" + "keystore.bks";
-    static char[] storePW,
-                  secretKeyPW;
-
-    public static void main(String[] args) {
-        KeyStore ks = createKeyStore();
-        generateAndAddKey(ks);
-        //store(ks, storeFileName);
-     //   getKey(storeFileName);
+    KeyTool(){
+        File f = new File(path);
+        if(f.isFile()) {
+            // ask for password to enter keystore
+        }
+        else {
+            // ask to register password
+        }
+        this.KeyPasswords = new ArrayList<String>();
     }
 
+    // should run first time program is run. (Look for file keystore.bks and if not found this should run):
     public static KeyStore createKeyStore() {
         KeyStore store = null;
         try {
             Scanner scanner = new Scanner(System.in);
-            System.out.print("Enter new password for secretkey:");
-            secretKeyPW = scanner.nextLine().toCharArray();
+
             System.out.print("Enter new password for store:");
             storePW = scanner.nextLine().toCharArray();
             store = KeyStore.getInstance("BKS", "BC");
@@ -36,8 +42,11 @@ public class MedicalKS {
         return store;
     }
 
+
     public static void generateAndAddKey(KeyStore store) {
         try {
+            System.out.print("Enter new password for new secretkey:");
+            secretKeyPW = scanner.nextLine().toCharArray();
             // generating random bytes
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
             byte[] keyBytes = new byte[16];
@@ -63,13 +72,14 @@ public class MedicalKS {
     public static KeyStore load(String path) {
         KeyStore ks = null;
         try {
-        // step (1)
+            // step (1)
             ks = KeyStore.getInstance("BKS", "BC");
-        // step (2)
+            // step (2)
             Scanner scanner = new Scanner(System.in);
             System.out.print("Please type password to access the store:");
             char[] pw = scanner.nextLine().toCharArray();
-            FileInputStream fis = new FileInputStream(storeFileName);
+            FileInputStream fis
+                    = new FileInputStream(storeFileName);
             ks.load(fis, pw);
             fis.close();
         } catch (Exception e) { e.printStackTrace(); }
@@ -88,4 +98,5 @@ public class MedicalKS {
         } catch (Exception e) { e.printStackTrace(); }
         return key;
     }
+
 }
