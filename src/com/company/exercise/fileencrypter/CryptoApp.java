@@ -21,26 +21,46 @@ public class CryptoApp extends Application {
         primaryStage.setTitle("CryptR");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(dir));
-        Button encryptbutton = new Button("Select File To Encrypt");
-        Button decryptbutton = new Button("Select File To Decrypt");
+
+        Button encryptbutton = new Button("Encrypt");
+        Button decryptbutton = new Button("Decrypt");
+        Button encrypthashbutton = new Button("Encrypt and hash");
+        Button decrypthashbutton = new Button("Decrypt and de-hash");
+
         VBox vBox = new VBox();
         vBox.getChildren().add(encryptbutton);
         vBox.getChildren().add(decryptbutton);
+        vBox.getChildren().add(encrypthashbutton);
+        vBox.getChildren().add(decrypthashbutton);
         Scene scene = new Scene(vBox, 400, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
+
         CryptoTool cryptoTool = new CryptoTool();
+
         encryptbutton.setOnAction(e -> {
             File selectedFile = null;
             selectedFile = fileChooser.showOpenDialog(anotherStage);
-            cryptoTool.encryptFile(selectedFile.getPath(), "AES");
+            cryptoTool.encryptFile(selectedFile.getPath(), "AES", false);
         });
+
+        encrypthashbutton.setOnAction(e -> {
+            File selectedFile = null;
+            selectedFile = fileChooser.showOpenDialog(anotherStage);
+            cryptoTool.encryptFile(selectedFile.getPath(), "AES", true);
+        });
+
         decryptbutton.setOnAction(e -> {
             File selectedFile = null;
             selectedFile = fileChooser.showOpenDialog(anotherStage);
-            cryptoTool.decryptFile(selectedFile.getPath(), "AES");
+            cryptoTool.decryptFile(selectedFile.getPath(), "AES", false);
         });
 
+        decrypthashbutton.setOnAction(e -> {
+            File selectedFile = null;
+            selectedFile = fileChooser.showOpenDialog(anotherStage);
+            cryptoTool.decryptFile(selectedFile.getPath(), "AES", true);
+        });
     }
     public void testCase(File file) {
         if (file != null && file.getName().equals(fileName))
