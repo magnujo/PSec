@@ -73,9 +73,10 @@ public class CryptoApp extends Application {
         KeyTool keyTool = new KeyTool();
 
         loginButton.setOnAction(e -> {
-            window1.setScene(cryptoScene);
-            keyTool.load(loginPWField.getText());
-            System.out.println(loginPWField.getText());
+            if(keyTool.checkStorePW(loginPWField.getText())){
+                window1.setScene(cryptoScene);
+            }
+            else AlertBox.display("Warning!", "Wrong Password, try again");
         });
 
         VBox loginLayout = new VBox();

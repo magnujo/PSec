@@ -72,17 +72,7 @@ public class KeyTool {
             // step (2)
             char[] pw = storePW.toCharArray();
             FileInputStream fis = new FileInputStream(storePath);
-            try {
-                ks.load(fis, pw);
-            }
-            catch (Exception e) {
-                if (e instanceof IOException) {
-                    System.out.println("Wrong password");
-                }
-                else {
-                    e.printStackTrace();
-                }
-            }
+            ks.load(fis, pw);
             fis.close();
         }
         catch (Exception e) {e.printStackTrace();}
@@ -102,19 +92,13 @@ public class KeyTool {
                 ks.load(fis, pw);
             }
             catch (Exception e) {
-                if (e instanceof IOException) {
-                    System.out.println("Wrong password");
-                    return false;
-                }
-                else {
-                    e.printStackTrace();
-                }
+                if (e instanceof IOException) {return false;}
+                else e.printStackTrace();
             }
             fis.close();
         }
         catch (Exception e) {e.printStackTrace();}
         return true;
-
     }
 
     public SecretKeySpec getKey(String path) {
