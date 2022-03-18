@@ -1,9 +1,11 @@
-Hash length: 32
-Hash value: [11, 77, 10, -97, 18, 40, -72, -92, -109, 94, -109, -102, 32, 71, -97, -109, 110, -39, 47, 72, 96, -33, 29, 81, -22, -114, -59, 102, -49, -123, 117, -6]
-Plaintext length with hash: 6510
-Ciphertext length with hash: 6512
-writing to:   C:\Users\Magnus\OneDrive - Roskilde Universitet\RUC\2. semester\PSec\IntelliJPsecDir\Exercises\src\com\company\exercise\files\Very confidential hacking.pdf.AES
-Slut
+Ide: Encrypted chat app (like signal)
 
-Plaintext length without hash: 6478
-Ciphertext length without hash: 6480
+Sockets til at forbinde
+
+Chat beskeder lagret på en fil som crypteres
+
+Window er delt i 2 hvor den ene side skal repræsentere client 1 og den anden klient 2.
+
+PW manager GUI er MVC.
+
+Lave øvelse med PW manager for at få en forståelse for mvc.

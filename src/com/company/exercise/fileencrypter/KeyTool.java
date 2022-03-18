@@ -4,8 +4,10 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -36,7 +38,6 @@ public class KeyTool {
         store(store);
     }
 
-
     public void generateAndAddKey(KeyStore store) {
         try {
             System.out.print("Enter new password for new secretkey:");
@@ -54,7 +55,6 @@ public class KeyTool {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-
     public void store(KeyStore store) {
         try {
             FileOutputStream fOut = new FileOutputStream(storePath);
@@ -62,6 +62,7 @@ public class KeyTool {
             fOut.close();
         } catch (Exception e) { e.printStackTrace(); }
     }
+
 
     public KeyStore load(String storePW) {
         KeyStore ks = null;
@@ -71,10 +72,49 @@ public class KeyTool {
             // step (2)
             char[] pw = storePW.toCharArray();
             FileInputStream fis = new FileInputStream(storePath);
-            ks.load(fis, pw);
+            try {
+                ks.load(fis, pw);
+            }
+            catch (Exception e) {
+                if (e instanceof IOException) {
+                    System.out.println("Wrong password");
+                }
+                else {
+                    e.printStackTrace();
+                }
+            }
             fis.close();
-        } catch (Exception e) { e.printStackTrace(); }
+        }
+        catch (Exception e) {e.printStackTrace();}
         return ks;
+
+    }
+
+    public boolean checkStorePW(String storePW) {
+        KeyStore ks = null;
+        try {
+            // step (1)
+            ks = KeyStore.getInstance("BKS", "BC");
+            // step (2)
+            char[] pw = storePW.toCharArray();
+            FileInputStream fis = new FileInputStream(storePath);
+            try {
+                ks.load(fis, pw);
+            }
+            catch (Exception e) {
+                if (e instanceof IOException) {
+                    System.out.println("Wrong password");
+                    return false;
+                }
+                else {
+                    e.printStackTrace();
+                }
+            }
+            fis.close();
+        }
+        catch (Exception e) {e.printStackTrace();}
+        return true;
+
     }
 
     public SecretKeySpec getKey(String path) {

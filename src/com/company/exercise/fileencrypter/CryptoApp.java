@@ -23,12 +23,10 @@ public class CryptoApp extends Application {
         launch(args);
     }
 
-
     public void start(Stage primaryStage) {
         window1 = primaryStage;
-        window2 = new Stage(); // to open filechooser in a new window
         window1.setTitle("CryptR");
-
+        window2 = new Stage(); // to open filechooser in a new window
 
         //Crypto stuff
         FileChooser fileChooser = new FileChooser();
@@ -105,7 +103,6 @@ public class CryptoApp extends Application {
         registerLayout.getChildren().addAll(registerLabel, registerPWField, registerButton);
         registerScene = new Scene(registerLayout, 400, 200);
 
-
         //Scene handling
         if (keyTool.fileCheck()){
             window1.setScene(loginScene);
@@ -115,9 +112,8 @@ public class CryptoApp extends Application {
         }
 
         window1.show();
-
-
     }
+
     public void testCase(File file) {
         if (file != null && file.getName().equals(fileName))
             System.out.println("Test case succeeded");
