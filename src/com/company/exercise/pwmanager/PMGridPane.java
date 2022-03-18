@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 
 public class PMGridPane extends GridPane {
@@ -167,6 +168,7 @@ class StoreButton extends Button {
         setOnAction(e -> {
             PMGridPane pm = (PMGridPane) getParent();
             pm.store();
+            System.out.println(((TextField) pm.getNode(0, 2)).getText());
         });
     }
 } // StoreButton
