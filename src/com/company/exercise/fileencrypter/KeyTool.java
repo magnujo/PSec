@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
@@ -12,10 +13,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class KeyTool {
-    ArrayList<char[]> KeyPasswords;
     char[] storePW;
     String storePath = "src/com/company/exercise/fileencrypter/keystore.bks";
-
+    KeyStore ks;
 
     public boolean fileCheck(){
         File f = new File(storePath);
@@ -30,17 +30,16 @@ public class KeyTool {
     // should run first time program is run. (Look for file keystore.bks and if not found this should run):
     public void createKeyStore(String storePW) {
         this.storePW = storePW.toCharArray();
-        KeyStore store = null;
+
         try {
-            store = KeyStore.getInstance("BKS", "BC");
-            store.load(null, null);
+            ks = KeyStore.getInstance("BKS", "BC");
+            ks.load(null, null);
         } catch (Exception e) { e.printStackTrace(); }
-        store(store);
+        store();
     }
 
-    public void generateAndAddKey(KeyStore store) {
+    public void generateAndAddKey(String KeyPW) {
         try {
-            System.out.print("Enter new password for new secretkey:");
             // generating random bytes
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
             byte[] keyBytes = new byte[16];
@@ -49,23 +48,22 @@ public class KeyTool {
             SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
             // adding key to keystore
             KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
-            KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(KeyPasswords.get(0));
-            store.setEntry("key", entry, protection);
+            KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(KeyPW.toCharArray());
+            ks.setEntry("key", entry, protection);
 
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public void store(KeyStore store) {
+    public void store() {
         try {
             FileOutputStream fOut = new FileOutputStream(storePath);
-            store.store(fOut, storePW);
+            ks.store(fOut, storePW);
             fOut.close();
         } catch (Exception e) { e.printStackTrace(); }
     }
 
 
     public KeyStore load(String storePW) {
-        KeyStore ks = null;
         try {
             // step (1)
             ks = KeyStore.getInstance("BKS", "BC");
@@ -73,9 +71,11 @@ public class KeyTool {
             char[] pw = storePW.toCharArray();
             FileInputStream fis = new FileInputStream(storePath);
             ks.load(fis, pw);
+            System.out.println(ks.aliases());
             fis.close();
         }
         catch (Exception e) {e.printStackTrace();}
+
         return ks;
 
     }

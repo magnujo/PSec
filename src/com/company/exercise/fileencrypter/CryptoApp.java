@@ -36,8 +36,16 @@ public class CryptoApp extends Application {
         Button decryptbutton = new Button("Decrypt");
         Button encrypthashbutton = new Button("Encrypt and hash");
         Button decrypthashbutton = new Button("Decrypt and de-hash");
+        Button createkeybutton = new Button("Create Key");
 
         CryptoTool cryptoTool = new CryptoTool();
+        KeyTool keyTool = new KeyTool();
+
+        createkeybutton.setOnAction(e -> {
+            PWBox pwBox = new PWBox();
+            pwBox.display("Enter password for new key", "Enter password for new key");
+            keyTool.generateAndAddKey(pwBox.getPW());
+        });
 
         encryptbutton.setOnAction(e -> {
             File selectedFile = null;
@@ -64,17 +72,20 @@ public class CryptoApp extends Application {
         });
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(encryptbutton, decryptbutton, encrypthashbutton, decrypthashbutton);
+        vBox.getChildren().addAll(encryptbutton, decryptbutton, encrypthashbutton, decrypthashbutton, createkeybutton);
         cryptoScene = new Scene(vBox, 400, 200);
 
         //Login stuff
         Button loginButton = new Button("Login");
         PasswordField loginPWField = new PasswordField();
-        KeyTool keyTool = new KeyTool();
+
 
         loginButton.setOnAction(e -> {
-            if(keyTool.checkStorePW(loginPWField.getText())){
+            String pwInput = loginPWField.getText();
+            if(keyTool.checkStorePW(pwInput)){
                 window1.setScene(cryptoScene);
+                keyTool.load(pwInput);
+
             }
             else AlertBox.display("Warning!", "Wrong Password, try again");
         });
@@ -112,6 +123,10 @@ public class CryptoApp extends Application {
             window1.setScene(registerScene);
         }
 
+        window1.setOnCloseRequest(e -> {
+            keyTool.store();
+            System.out.println("Saving...");
+        });
         window1.show();
     }
 
