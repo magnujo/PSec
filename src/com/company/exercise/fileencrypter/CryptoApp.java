@@ -10,6 +10,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Arrays;
 
 
 // Selects a file and checks it's the file you wanted
@@ -124,6 +125,7 @@ public class CryptoApp extends Application {
         }
 
         window1.setOnCloseRequest(e -> {
+            System.out.println(Arrays.toString(keyTool.storePW));
             keyTool.store();
             System.out.println("Saving...");
         });

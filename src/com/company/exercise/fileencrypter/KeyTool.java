@@ -1,5 +1,6 @@
 package com.company.exercise.fileencrypter;
 
+import javax.crypto.ExemptionMechanismException;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class KeyTool {
@@ -35,7 +37,6 @@ public class KeyTool {
             ks = KeyStore.getInstance("BKS", "BC");
             ks.load(null, null);
         } catch (Exception e) { e.printStackTrace(); }
-        store();
     }
 
     public void generateAndAddKey(String KeyPW) {
@@ -57,18 +58,22 @@ public class KeyTool {
     public void store() {
         try {
             FileOutputStream fOut = new FileOutputStream(storePath);
+            System.out.println("Storing pw as: " + Arrays.toString(storePW));
             ks.store(fOut, storePW);
             fOut.close();
+            System.out.println("Save complete");
         } catch (Exception e) { e.printStackTrace(); }
     }
 
 
     public KeyStore load(String storePW) {
+
         try {
             // step (1)
             ks = KeyStore.getInstance("BKS", "BC");
             // step (2)
             char[] pw = storePW.toCharArray();
+            this.storePW = pw;
             FileInputStream fis = new FileInputStream(storePath);
             ks.load(fis, pw);
             System.out.println(ks.aliases());
@@ -81,6 +86,11 @@ public class KeyTool {
     }
 
     public boolean checkStorePW(String storePW) {
+        if (storePW.length()<1){
+            System.out.println("Hej");
+            return  false;
+        }
+        System.out.println("hejehej");
         KeyStore ks = null;
         try {
             // step (1)
@@ -90,15 +100,20 @@ public class KeyTool {
             FileInputStream fis = new FileInputStream(storePath);
             try {
                 ks.load(fis, pw);
-            }
-            catch (Exception e) {
-                if (e instanceof IOException) {return false;}
-                else e.printStackTrace();
+            } catch (Exception e) {
+                if (e instanceof IOException){
+                    return false;
+                }
+                else { e.printStackTrace();}
             }
             fis.close();
         }
         catch (Exception e) {e.printStackTrace();}
         return true;
+    }
+
+    public String getStorePW(){
+        return Arrays.toString(storePW);
     }
 
     public SecretKeySpec getKey(String path) {
