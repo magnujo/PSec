@@ -6,13 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.security.*;
+import java.util.*;
 
 public class KeyTool {
     char[] storePW;
@@ -39,7 +34,7 @@ public class KeyTool {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public void generateAndAddKey(String KeyPW) {
+    public void generateAndAddKey(String KeyPW, String alias) {
         try {
             // generating random bytes
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
@@ -50,15 +45,17 @@ public class KeyTool {
             // adding key to keystore
             KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
             KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(KeyPW.toCharArray());
-            ks.setEntry("key", entry, protection);
+            ks.setEntry(alias, entry, protection);
+            System.out.println("Stored key as: " + ks.getKey(alias, KeyPW.toCharArray()).toString());
 
         } catch (Exception e) { e.printStackTrace(); }
     }
 
     public void store() {
+        System.out.println("Storing...");
         try {
             FileOutputStream fOut = new FileOutputStream(storePath);
-            System.out.println("Storing pw as: " + Arrays.toString(storePW));
+            printContent();
             ks.store(fOut, storePW);
             fOut.close();
             System.out.println("Save complete");
@@ -67,6 +64,7 @@ public class KeyTool {
 
 
     public KeyStore load(String storePW) {
+        System.out.println("Loading...");
 
         try {
             // step (1)
@@ -76,8 +74,9 @@ public class KeyTool {
             this.storePW = pw;
             FileInputStream fis = new FileInputStream(storePath);
             ks.load(fis, pw);
-            System.out.println(ks.aliases());
             fis.close();
+            printContent();
+
         }
         catch (Exception e) {e.printStackTrace();}
 
@@ -85,12 +84,20 @@ public class KeyTool {
 
     }
 
+    public void printContent() throws KeyStoreException {
+        System.out.println("Password: " + Arrays.toString(storePW));
+        System.out.println("Number of keys in store: " + ks.size());
+        System.out.println("Key aliase: ");
+        for (Iterator<String> i = ks.aliases().asIterator(); i.hasNext(); ) {
+            System.out.println(i.next());
+        }
+    }
+
     public boolean checkStorePW(String storePW) {
         if (storePW.length()<1){
-            System.out.println("Hej");
             return  false;
         }
-        System.out.println("hejehej");
+
         KeyStore ks = null;
         try {
             // step (1)
@@ -116,17 +123,28 @@ public class KeyTool {
         return Arrays.toString(storePW);
     }
 
-    public SecretKeySpec getKey(String path) {
+    public SecretKeySpec getKey(String alias, String pw) {
         SecretKeySpec key = null;
         try {
-            KeyStore ks = load(path);
-            System.out.print("Please type password to access key: ");
-            Scanner scanner = new Scanner(System.in);
-            char[] pw = scanner.nextLine().toCharArray();
-            key = (SecretKeySpec) ks.getKey("key", pw);
-            System.out.println(key);
+            //KeyStore ks = load(storePath);
+            key = (SecretKeySpec) ks.getKey(alias, pw.toCharArray());
         } catch (Exception e) { e.printStackTrace(); }
         return key;
+    }
+
+    public int size(){
+        int size = 0;
+        try {
+            size = ks.size();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return size;
+    }
+
+
+    public Enumeration<String> getKeyAliases() throws KeyStoreException {
+    return ks.aliases();
     }
 
 }

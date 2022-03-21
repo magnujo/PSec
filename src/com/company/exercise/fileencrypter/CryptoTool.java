@@ -4,6 +4,7 @@ import org.bouncycastle.util.encoders.Hex;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.file.LinkPermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -15,6 +16,7 @@ public class CryptoTool {
     String algorithm;
     byte[] keyBytes = Hex.decode("000102030405060708090a0b0c0d0e0f");
     byte[] iv;
+    int ivLength;
 
     CryptoTool() {
         SecureRandom secureRandom = null;
@@ -24,14 +26,18 @@ public class CryptoTool {
         catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
         }
-        this.iv = new byte[16];
+        iv = new byte[16];
         assert secureRandom != null;
         secureRandom.nextBytes(iv);
+        ivLength = iv.length;
     }
 
-    public void encryptFile(String filepath, String algorithm, boolean hashing) {
+    public void encryptFile(String filepath, String algorithm, boolean hashing, SecretKeySpec key) {
+
         this.algorithm = algorithm.toUpperCase();
         if (hashing) {
+            System.out.println("encrypting and hashing using Key: " + Arrays.toString(key.getEncoded()));
+            System.out.println("IV: " + Arrays.toString(iv));
             try {
                 // reading plaintext file
                 byte[] input = library.FileUtil.readAllBytes(filepath);
@@ -50,13 +56,18 @@ public class CryptoTool {
 
                 // encrypting input::hashvalue
                 Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
-                SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
                 cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
                 byte[] ciphertext = cipher.doFinal(inputWithHash);
                 System.out.println("Ciphertext length with hash: " + ciphertext.length);
 
+                byte[] ciphertext_iv = new byte[ciphertext.length + iv.length];
+
+                System.arraycopy(ciphertext, 0, ciphertext_iv, 0, ciphertext.length);
+                System.arraycopy(iv, 0, ciphertext_iv, ciphertext.length, iv.length);
+
                 // writing
-                library.FileUtil.write(filepath + "." + algorithm, ciphertext);
+                library.FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
                 System.out.println("Slut");
 
 
@@ -65,6 +76,8 @@ public class CryptoTool {
             }
 
         } else {
+            System.out.println("encrypting using Key: " + Arrays.toString(key.getEncoded()));
+            System.out.println("IV: " + Arrays.toString(iv));
             try {
 
                 // reading
@@ -74,13 +87,18 @@ public class CryptoTool {
 
                 // encrypting
                 Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
-                SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
                 cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
-                byte[] output = cipher.doFinal(input);
-                System.out.println("Ciphertext length without hash: " + output.length);
+                System.out.println("Encrypting using key: " + key.toString());
+                byte[] ciphertext = cipher.doFinal(input);
+                System.out.println("Ciphertext length without hash: " + ciphertext.length);
+
+                byte[] ciphertext_iv = new byte[ciphertext.length + iv.length];
+                System.arraycopy(ciphertext, 0, ciphertext_iv, 0, ciphertext.length);
+                System.arraycopy(iv, 0, ciphertext_iv, ciphertext.length, iv.length);
 
                 // writing
-                library.FileUtil.write(filepath + "." + algorithm, output);
+                library.FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
                 System.out.println("Slut");
 
             } catch (Exception e) {
@@ -89,25 +107,29 @@ public class CryptoTool {
         }
     }
 
-    public void decryptFile(String filepath, String algorithm, boolean hashing) {
+    public void decryptFile(String filepath, String algorithm, boolean hashing, SecretKeySpec key) {
 
         this.algorithm = algorithm.toUpperCase();
 
         if (hashing) {
+            System.out.println("Decrypting and dehashing using Key: " + Arrays.toString(key.getEncoded()));
             try {
                 // Reading
                 System.out.println(filepath);
                 byte[] input = library.FileUtil.readAllBytes(filepath);
                 System.out.println(input);
+                byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
+                byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
+                System.out.println("IV: " + Arrays.toString(iv));
 
                 //Tampering test
                // input[56] = 10;
 
                 // Decrypting
                 Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
-                SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
                 cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-                byte[] output = cipher.doFinal(input);
+                byte[] output = cipher.doFinal(ciphertext);
 
                 System.out.println("Decryptet text length: " + output.length);
 
@@ -125,18 +147,22 @@ public class CryptoTool {
         }
 
         else {
+            System.out.println("Decrypting using Key: " + Arrays.toString(key.getEncoded()));
             try {
 
             // Reading
             System.out.println(filepath);
             byte[] input = library.FileUtil.readAllBytes(filepath);
             System.out.println(input);
+            byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
+            byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
+            System.out.println("IV: " + Arrays.toString(iv));
 
             // Decrypting
             Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
-            SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+            //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
             cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-            byte[] output = cipher.doFinal(input);
+            byte[] output = cipher.doFinal(ciphertext);
 
             // Writing (removes the .AES from the filepath)
             library.FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);

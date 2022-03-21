@@ -8,4 +8,10 @@ Window er delt i 2 hvor den ene side skal repræsentere client 1 og den anden kl
 
 PW manager GUI er MVC.
 
-Lave øvelse med PW manager for at få en forståelse for mvc.
+
+append iv to the end of the encrypted file
+
+encrypting using Key: [8, -117, -121, -30, -94, 108, 52, 12, 46, 25, -90, -60, 110, -68, -1, 99]
+Decrypting using Key: [8, -117, -121, -30, -94, 108, 52, 12, 46, 25, -90, -60, 110, -68, -1, 99]
+IV: [4, 119, -40, 89, 113, -40, 44, -67, 97, -65, -78, -83, 45, 26, -83, -100]
+IV: [4, 119, -40, 89, 113, -40, 44, -67, 97, -65, -78, -83, 45, 26, -83, -100]

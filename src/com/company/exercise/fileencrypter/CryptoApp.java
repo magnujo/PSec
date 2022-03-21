@@ -1,11 +1,14 @@
 package com.company.exercise.fileencrypter;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -43,42 +46,54 @@ public class CryptoApp extends Application {
         KeyTool keyTool = new KeyTool();
 
         createkeybutton.setOnAction(e -> {
-            PWBox pwBox = new PWBox();
-            pwBox.display("Enter password for new key", "Enter password for new key");
-            keyTool.generateAndAddKey(pwBox.getPW());
+            CreateKeyBox createKeyBox = new CreateKeyBox();
+            createKeyBox.display("New Key", "Enter password for new key");
+            keyTool.generateAndAddKey(createKeyBox.getPW(), createKeyBox.getAlias());
         });
 
         encryptbutton.setOnAction(e -> {
+            KeysBox keysBox = new KeysBox(keyTool);
+            keysBox.display("Select key", "Select key");
             File selectedFile = null;
             selectedFile = fileChooser.showOpenDialog(window2);
-            cryptoTool.encryptFile(selectedFile.getPath(), "AES", false);
+            cryptoTool.encryptFile(selectedFile.getPath(), "AES", false, keysBox.getKey());
+
         });
 
         encrypthashbutton.setOnAction(e -> {
+            KeysBox keysBox = new KeysBox(keyTool);
+            keysBox.display("Select key", "Select key");
             File selectedFile = null;
             selectedFile = fileChooser.showOpenDialog(window2);
-            cryptoTool.encryptFile(selectedFile.getPath(), "AES", true);
+            cryptoTool.encryptFile(selectedFile.getPath(), "AES", true, keysBox.getKey());
         });
 
         decryptbutton.setOnAction(e -> {
+            KeysBox keysBox = new KeysBox(keyTool);
+            keysBox.display("Select key", "Select key");
             File selectedFile = null;
             selectedFile = fileChooser.showOpenDialog(window2);
-            cryptoTool.decryptFile(selectedFile.getPath(), "AES", false);
+            cryptoTool.decryptFile(selectedFile.getPath(), "AES", false, keysBox.getKey());
         });
 
         decrypthashbutton.setOnAction(e -> {
+            KeysBox keysBox = new KeysBox(keyTool);
+            keysBox.display("Select key", "Select key");
             File selectedFile = null;
             selectedFile = fileChooser.showOpenDialog(window2);
-            cryptoTool.decryptFile(selectedFile.getPath(), "AES", true);
+            cryptoTool.decryptFile(selectedFile.getPath(), "AES", true, keysBox.getKey());
         });
 
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(encryptbutton, decryptbutton, encrypthashbutton, decrypthashbutton, createkeybutton);
-        cryptoScene = new Scene(vBox, 400, 200);
+        HBox hBox = new HBox();
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll(encryptbutton, decryptbutton, encrypthashbutton, decrypthashbutton, createkeybutton);
+        hBox.setAlignment(Pos.CENTER);
+        cryptoScene = new Scene(hBox, 500, 70);
 
         //Login stuff
         Button loginButton = new Button("Login");
         PasswordField loginPWField = new PasswordField();
+        loginPWField.setMaxWidth(100);
 
 
         loginButton.setOnAction(e -> {
@@ -92,14 +107,20 @@ public class CryptoApp extends Application {
         });
 
         VBox loginLayout = new VBox();
+        loginLayout.setSpacing(10);
         loginLayout.getChildren().addAll(loginButton, loginPWField);
-        loginScene = new Scene(loginLayout, 400, 200);
+        loginLayout.setAlignment(Pos.CENTER);
+        loginScene = new Scene(loginLayout, 150, 100);
 
         //Register stuff
-        Label registerLabel = new Label("As this is your first time using the keystore, please provide a password for the store that you" +
-                "will use next time you open this app");
+        Label registerLabel = new Label("As this is your first time using the keystore,\n please provide a password for the store that" +
+                "\n you will use next time you open this app");
         Button registerButton = new Button("Register Store Password");
+        registerLabel.setAlignment(Pos.CENTER);
+        registerLabel.setTextAlignment(TextAlignment.CENTER);
         PasswordField registerPWField = new PasswordField();
+        registerPWField.setAlignment(Pos.CENTER);
+        registerPWField.setMaxWidth(100);
         registerButton.setOnAction(e -> {
 
             if (registerPWField.getText().length() <= 8) {
@@ -113,8 +134,10 @@ public class CryptoApp extends Application {
         });
 
         VBox registerLayout = new VBox();
+        registerLayout.setSpacing(10);
         registerLayout.getChildren().addAll(registerLabel, registerPWField, registerButton);
-        registerScene = new Scene(registerLayout, 400, 200);
+        registerLayout.setAlignment(Pos.CENTER);
+        registerScene = new Scene(registerLayout, 300, 150);
 
         //Scene handling
         if (keyTool.fileCheck()){
@@ -126,8 +149,10 @@ public class CryptoApp extends Application {
 
         window1.setOnCloseRequest(e -> {
             System.out.println(Arrays.toString(keyTool.storePW));
-            keyTool.store();
-            System.out.println("Saving...");
+            if(keyTool.storePW != null){
+                keyTool.store();
+                System.out.println("Saving...");
+            }
         });
         window1.show();
     }

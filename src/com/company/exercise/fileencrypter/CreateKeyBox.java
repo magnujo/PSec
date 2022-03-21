@@ -9,13 +9,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class PWBox {
-    static Stage window;
-    static PasswordField pwfield;
-    static String PW;
+public class CreateKeyBox {
+    Stage window;
+    PasswordField pwfield;
+    String PW;
+    String alias;
+    TextField aliasfield;
 
-
-    public static void display(String title, String message){
+    public void display(String title, String message){
         window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -23,16 +24,19 @@ public class PWBox {
         window.setMinWidth(250);
 
         Label label1 = new Label(message);
-        Button savebutton = new Button("OK");
+        Label label2 = new Label("Select name for key");
+        Button savebutton = new Button("Save");
         pwfield = new PasswordField();
+        aliasfield = new TextField();
         savebutton.setOnAction(e -> {
-            PW = pwfield.getText();
+            this.PW = pwfield.getText();
+            this.alias = aliasfield.getText();
             window.close();
         });
 
 
         VBox layout = new VBox();
-        layout.getChildren().addAll(label1, pwfield, savebutton);
+        layout.getChildren().addAll(label2, aliasfield, label1, pwfield, savebutton);
         Scene scene = new Scene(layout);
 
         window.setScene(scene);
@@ -42,6 +46,6 @@ public class PWBox {
     public String getPW(){
         return PW;
     }
-
+    public String getAlias(){ return alias; }
 
 }
