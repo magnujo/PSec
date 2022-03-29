@@ -21,6 +21,7 @@ public class View extends BorderPane {
         Button sendButton = new Button("Send");
         TextArea textArea = new TextArea();
 
+
         center.setPrefHeight(700);
 
         double bpHeight = windowHeight*0.25;
@@ -31,10 +32,10 @@ public class View extends BorderPane {
         chatPane.setPrefHeight(cpHeight);
 
         textArea.setPrefHeight(bpHeight);
-        textArea.setPrefWidth(windowWidth*0.50);
+        textArea.setPrefWidth(windowWidth*0.60);
 
         sendButton.setPrefHeight(bpHeight);
-        sendButton.setPrefWidth(windowWidth*0.20);
+        sendButton.setPrefWidth(windowWidth*0.30);
 
         bottomPane.getChildren().addAll(textArea, sendButton);
 
