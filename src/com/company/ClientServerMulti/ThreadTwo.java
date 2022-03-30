@@ -1,14 +1,12 @@
-package com.company.ClientServerTest;
-
-import com.sun.webkit.ThemeClient;
+package com.company.ClientServerMulti;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
-
-    public static void main(String[] args)  {
+public class ThreadTwo implements Runnable{
+    @Override
+    public void run() {
         Socket socket = null;
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;
@@ -17,7 +15,7 @@ public class Server {
         ServerSocket serverSocket = null;
 
         try {
-            serverSocket = new ServerSocket(1234);
+            serverSocket = new ServerSocket(1235);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,7 +58,6 @@ public class Server {
 
 
         }
-
 
     }
 }

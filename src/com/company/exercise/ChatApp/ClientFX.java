@@ -1,12 +1,10 @@
 package com.company.exercise.ChatApp;
 
-import com.company.exercise.pwmanager.PMGridPane;
-import com.company.exercise.pwmanager.PasswordProtector;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class ChatAppFX extends Application {
+public class ClientFX extends Application {
 
 
 
