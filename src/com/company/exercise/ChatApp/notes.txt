@@ -1,0 +1,10 @@
+Usecase:
+
+Login using keystore
+Decrypt the chat history using key from keystore.
+Load the chat history into the gui
+Write a message
+Generate symmetric AES key pair using RSA
+Encrypt the message using private symmetric key
+Send the message
+

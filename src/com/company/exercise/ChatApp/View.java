@@ -14,13 +14,16 @@ public class View extends BorderPane {
     double windowWidth = 500;
     double bpHeight = windowHeight*0.25;
     double cpHeight = windowHeight*0.75;
+    TextArea textArea;
+    VBox chatBox;
+
 
 
     public View() {
         //Center:
         //Chat pane (area to display chat messages)
         ScrollPane chatPane = new ScrollPane();
-        VBox chatBox = new VBox();
+        chatBox = new VBox();
         chatBox.setPrefHeight(cpHeight*0.5);
         chatBox.setPrefWidth(chatPane.getPrefWidth());
         chatPane.setFitToWidth(true);
@@ -29,8 +32,9 @@ public class View extends BorderPane {
 
         //Bottom pane (Text field and send button)
         HBox bottomPane = new HBox();
-        Button sendButton = new Button("Send");
-        TextArea textArea = new TextArea();
+        SendButton sendButton = new SendButton();
+        textArea = new TextArea();
+        textArea.setPromptText("Write your message here...");
         textArea.setPrefHeight(bpHeight);
         textArea.setPrefWidth(windowWidth*0.60);
         sendButton.setPrefHeight(bpHeight);
@@ -52,4 +56,24 @@ public class View extends BorderPane {
 
     }
 
+    void send(){
+        String text = textArea.getText();
+        HBox messageBox = new HBox();
+        Label label = new Label(text);
+        messageBox.getChildren().add(label);
+        chatBox.getChildren().add(messageBox);
+        textArea.clear();
+    }
+
+}
+
+class SendButton extends Button {
+    SendButton(){
+        setText("end");
+        setOnAction(e -> {
+            View view = (View) getParent().getParent().getParent();
+            view.send();
+
+        });
+    }
 }
