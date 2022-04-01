@@ -3,6 +3,7 @@ package com.company.ClientServerMulti;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+//Socket code is from WittCode (https://www.youtube.com/watch?v=gchR3DpY-8Q)
 
 public class Client2 {
 

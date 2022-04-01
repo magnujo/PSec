@@ -48,7 +48,7 @@ public class View extends BorderPane {
         setCenter(center);
 
         //Left:
-        //Side pane
+        //Side pane (Contacts list)
         ScrollPane sidePane = new ScrollPane();
         sidePane.setPrefWidth(250);
 
@@ -56,15 +56,15 @@ public class View extends BorderPane {
 
     }
 
-    void send(){
+    String send(){
         String text = textArea.getText();
         HBox messageBox = new HBox();
         Label label = new Label(text);
         messageBox.getChildren().add(label);
         chatBox.getChildren().add(messageBox);
         textArea.clear();
+        return text;
     }
-
 }
 
 class SendButton extends Button {
@@ -73,7 +73,6 @@ class SendButton extends Button {
         setOnAction(e -> {
             View view = (View) getParent().getParent().getParent();
             view.send();
-
         });
     }
 }
