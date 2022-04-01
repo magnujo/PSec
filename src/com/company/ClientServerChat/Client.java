@@ -1,10 +1,10 @@
-package com.company.ClientServerTest;
+package com.company.ClientServerChat;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
-
-public class Client2 {
+//Socket code is from WittCode (https://www.youtube.com/watch?v=gchR3DpY-8Q)
+public class Client {
 
     public static void main(String[] args) {
         Socket socket = null;

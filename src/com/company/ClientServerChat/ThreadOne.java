@@ -1,14 +1,12 @@
-package com.company.ClientServerTest;
-
-import com.sun.webkit.ThemeClient;
+package com.company.ClientServerChat;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
-
-    public static void main(String[] args)  {
+public class ThreadOne implements Runnable {
+    @Override
+    public void run() {
         Socket socket = null;
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;
@@ -60,7 +58,6 @@ public class Server {
 
 
         }
-
 
     }
 }
