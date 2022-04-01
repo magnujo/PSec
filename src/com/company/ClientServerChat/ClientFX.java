@@ -9,7 +9,8 @@ public class ClientFX extends Application {
 
     public void start(Stage stage) {
         stage.setTitle("Chat App");
-        View view = new View();
+        CryptoTool ct = new CryptoTool();
+        View view = new View(ct);
 
         Scene scene = new Scene(view, 700, 500);
         stage.setScene(scene);

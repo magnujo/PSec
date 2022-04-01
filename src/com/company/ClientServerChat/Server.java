@@ -8,7 +8,7 @@ public class Server {
         ThreadOne threadOne = new ThreadOne();
         ThreadTwo threadTwo = new ThreadTwo();
         ClientFX clientFX = new ClientFX();
-        Thread t1 = new Thread(clientFX);
+        Thread t1 = new Thread(threadTwo);
         Thread t2 = new Thread(threadOne);
 
         t1.start();
