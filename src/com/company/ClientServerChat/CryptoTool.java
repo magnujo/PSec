@@ -4,6 +4,7 @@ import org.bouncycastle.util.encoders.Hex;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -82,12 +83,85 @@ public class CryptoTool {
         symKey.getEncoded();
 
     }
+    //problem with iv? should i use the iv i get from the other party?
+    public byte[] encryptMessage(String msg, boolean hashing) {
+        if (hashing) {
+            System.out.println("encrypting and hashing using Key: " + Arrays.toString(symKey.getEncoded()));
+            System.out.println("IV: " + Arrays.toString(iv));
+            try {
+                // reading plaintext file
+                byte[] input = msg.getBytes(StandardCharsets.UTF_8);
 
-    public void encryptMessage(String msg) {
+                // computing hash value of plaintext
+                MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
+                byte[] hashValue = digest.digest(input);
+                System.out.println("Hash length: " + hashValue.length);
+                System.out.println("Hash value: " + Arrays.toString(hashValue));
 
+                // Appending hash value to input
+                byte[] inputWithHash = new byte[input.length + hashValue.length];
+                System.arraycopy(input, 0, inputWithHash, 0, input.length);
+                System.arraycopy(hashValue, 0, inputWithHash, input.length, hashValue.length);
+                System.out.println("Plaintext length with hash: " + inputWithHash.length);
+
+                // encrypting input::hashvalue
+                Cipher cipher = Cipher.getInstance( "AES/CBC/PKCS5Padding", "BC");
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                cipher.init(Cipher.ENCRYPT_MODE, symKey, new IvParameterSpec(iv));
+                byte[] ciphertext = cipher.doFinal(inputWithHash);
+                System.out.println("Ciphertext length with hash: " + ciphertext.length);
+
+                byte[] ciphertext_iv = new byte[ciphertext.length + iv.length];
+
+                System.arraycopy(ciphertext, 0, ciphertext_iv, 0, ciphertext.length);
+                System.arraycopy(iv, 0, ciphertext_iv, ciphertext.length, iv.length);
+
+                // writing
+                System.out.println("Slut");
+                return ciphertext_iv;
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            System.out.println("encrypting using Key: " + Arrays.toString(symKey.getEncoded()));
+            System.out.println("IV: " + Arrays.toString(iv));
+            try {
+
+                // reading
+                byte[] input = msg.getBytes(StandardCharsets.UTF_8);
+                System.out.println("Plaintext length without hash: " + input.length);
+
+
+                // encrypting
+                Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                cipher.init(Cipher.ENCRYPT_MODE, symKey, new IvParameterSpec(iv));
+                System.out.println("Encrypting using key: " + symKey.toString());
+                byte[] ciphertext = cipher.doFinal(input);
+                System.out.println("Ciphertext length without hash: " + ciphertext.length);
+
+                byte[] ciphertext_iv = new byte[ciphertext.length + iv.length];
+                System.arraycopy(ciphertext, 0, ciphertext_iv, 0, ciphertext.length);
+                System.arraycopy(iv, 0, ciphertext_iv, ciphertext.length, iv.length);
+
+                // writing
+                System.out.println("Slut");
+                return ciphertext_iv;
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    return "ERROR".getBytes(StandardCharsets.UTF_8);
     }
 
     public void decryptMessage(String msg) {
+
 
     }
 
