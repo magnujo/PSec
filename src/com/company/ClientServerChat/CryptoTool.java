@@ -1,7 +1,10 @@
 package com.company.ClientServerChat;
 
+import com.sun.javafx.image.impl.General;
 import org.bouncycastle.util.encoders.Hex;
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -16,16 +19,16 @@ public class CryptoTool {
     byte[] keyBytes = Hex.decode("000102030405060708090a0b0c0d0e0f");
     byte[] iv;
     int ivLength;
-    RSAPublicKey publicKey;
-    RSAPrivateKey privateKey;
+    RSAPublicKey rsaPublicKey;
+    RSAPrivateKey rsaPrivateKey;
     KeyPairGenerator generator;
     KeyPair keyPair;
-    SecretKeySpec symKey;
+    SecretKeySpec aesSymKey;
 
     CryptoTool() {
         generateIv();
         generateAsymmetricKeyPair();
-        symKey = generateSymmetricKey();
+        aesSymKey = generateSymmetricKey();
     }
 
     public void generateIv(){
@@ -51,8 +54,8 @@ public class CryptoTool {
         }
         generator.initialize(3072);
         keyPair = generator.generateKeyPair();
-        publicKey = (RSAPublicKey) keyPair.getPublic();
-        privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
+        rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
     }
 
     public SecretKeySpec generateSymmetricKey() {
@@ -79,14 +82,32 @@ public class CryptoTool {
         }catch (Exception e) {e.printStackTrace();}
     }
 
-    public void encryptKey(RSAPublicKey pubKey){ //what happens if someone intercepts the encrypted key? they cannot decrypt it.
-        symKey.getEncoded();
 
+    //Make both by-hand style and API style. Padding addition?
+
+    //encrypt a symmetric key using RSA.
+    public byte[] encryptKey() { //what happens if someone intercepts the encrypted key? they cannot decrypt it.
+        byte[] wrappedKey = new byte[0];
+        try {
+            Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPwithSHA256andMGF1Padding", "BC");
+            cipher.init(Cipher.WRAP_MODE, rsaPublicKey);
+            wrappedKey = cipher.wrap(aesSymKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return wrappedKey;
     }
+
+    public SecretKeySpec decryptKey(byte[] wrappedKey) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPwithSHA256andMGF1Padding", "BC");
+        cipher.init(Cipher.UNWRAP_MODE, rsaPrivateKey);
+        return (SecretKeySpec)cipher.unwrap(wrappedKey, aesSymKey.getAlgorithm(), Cipher.SECRET_KEY);
+    }
+
     //problem with iv? should i use the iv i get from the other party?
     public byte[] encryptMessage(String msg, boolean hashing) {
         if (hashing) {
-            System.out.println("encrypting and hashing using Key: " + Arrays.toString(symKey.getEncoded()));
+            System.out.println("encrypting and hashing using Key: " + Arrays.toString(aesSymKey.getEncoded()));
             System.out.println("IV: " + Arrays.toString(iv));
             try {
                 // reading plaintext file
@@ -107,7 +128,7 @@ public class CryptoTool {
                 // encrypting input::hashvalue
                 Cipher cipher = Cipher.getInstance( "AES/CBC/PKCS5Padding", "BC");
                 //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
-                cipher.init(Cipher.ENCRYPT_MODE, symKey, new IvParameterSpec(iv));
+                cipher.init(Cipher.ENCRYPT_MODE, aesSymKey, new IvParameterSpec(iv));
                 byte[] ciphertext = cipher.doFinal(inputWithHash);
                 System.out.println("Ciphertext length with hash: " + ciphertext.length);
 
@@ -127,7 +148,7 @@ public class CryptoTool {
             }
 
         } else {
-            System.out.println("encrypting using Key: " + Arrays.toString(symKey.getEncoded()));
+            System.out.println("encrypting using Key: " + Arrays.toString(aesSymKey.getEncoded()));
             System.out.println("IV: " + Arrays.toString(iv));
             try {
 
@@ -137,10 +158,10 @@ public class CryptoTool {
 
 
                 // encrypting
-                Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
+                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
                 //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
-                cipher.init(Cipher.ENCRYPT_MODE, symKey, new IvParameterSpec(iv));
-                System.out.println("Encrypting using key: " + symKey.toString());
+                cipher.init(Cipher.ENCRYPT_MODE, aesSymKey, new IvParameterSpec(iv));
+                System.out.println("Encrypting using key: " + aesSymKey.toString());
                 byte[] ciphertext = cipher.doFinal(input);
                 System.out.println("Ciphertext length without hash: " + ciphertext.length);
 
@@ -160,9 +181,68 @@ public class CryptoTool {
     return "ERROR".getBytes(StandardCharsets.UTF_8);
     }
 
-    public void decryptMessage(String msg) {
+    public String decryptMessage(byte[] msg, boolean hashing) {
 
+        if (hashing) {
+            System.out.println("Decrypting and dehashing using Key: " + Arrays.toString(aesSymKey.getEncoded()));
+            try {
+                // Reading
+                System.out.println(Arrays.toString(msg));
+                byte[] input = msg;
+                byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
+                byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
+                System.out.println("IV: " + Arrays.toString(iv));
 
+                //Tampering test
+                // input[56] = 10;
+
+                // Decrypting
+                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                cipher.init(Cipher.DECRYPT_MODE, aesSymKey, new IvParameterSpec(iv));
+                byte[] output = cipher.doFinal(ciphertext);
+
+                System.out.println("Decryptet text length: " + output.length);
+
+                //Splitting the hash value from the plaintext
+                byte[] hashValue = Arrays.copyOfRange(output, output.length - 32, output.length);
+                byte[] plainText = Arrays.copyOfRange(output, 0, output.length - 32);
+                System.out.println("Hash length from file: " + hashValue.length);
+                System.out.println("Hash value from file: " + Arrays.toString(hashValue));
+
+                // Checking the integrity before writing
+                boolean verification = verifySHA256(hashValue, plainText);
+
+                if (verification) {
+                    return new String(plainText);
+                }
+                    else return "Message has been tampered";
+            } catch (Exception e) { e.printStackTrace();}
+        }
+
+        else {
+            System.out.println("Decrypting using Key: " + Arrays.toString(aesSymKey.getEncoded()));
+            try {
+
+                // Reading
+                byte[] input = msg;
+                System.out.println(Arrays.toString(input));
+                byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
+                byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
+                System.out.println("IV: " + Arrays.toString(iv));
+
+                // Decrypting
+                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
+                //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
+                cipher.init(Cipher.DECRYPT_MODE, aesSymKey, new IvParameterSpec(iv));
+                byte[] output = cipher.doFinal(ciphertext);
+
+                // Writing (removes the .AES from the filepath)
+                return new String(output);
+            } catch (Exception e) { e.printStackTrace();}
+        }
+
+    return "Error: There was an issue receiving a message from the sender";
     }
 
     public void encryptFile(String filepath, String algorithm, boolean hashing, SecretKeySpec key) {
@@ -286,7 +366,7 @@ public class CryptoTool {
                 // Reading
                 System.out.println(filepath);
                 byte[] input = library.FileUtil.readAllBytes(filepath);
-                System.out.println(input);
+                System.out.println(Arrays.toString(input));
                 byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
                 byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
                 System.out.println("IV: " + Arrays.toString(iv));
@@ -337,7 +417,7 @@ public class CryptoTool {
     }
 
 
-    void verifySHA256(byte[] hashvalue, byte[] plaintext){
+    public boolean verifySHA256(byte[] hashvalue, byte[] plaintext){
         try {
             // Verifying hash
             MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
@@ -346,15 +426,17 @@ public class CryptoTool {
 
             if (MessageDigest.isEqual(computedHashValue, hashvalue)) {
                 System.out.println("Hash values are equal");
-
+                return true;
 
             } else {
                 System.out.println("Hash values are not equal");
-
+                return false;
             }
         }
         catch (Exception e) { e.printStackTrace(); }
 
+        System.out.println("Verification error");
+        return false;
     }
 
 }
