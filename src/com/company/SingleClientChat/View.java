@@ -1,4 +1,4 @@
-package com.company.ClientServerChat;
+package com.company.SingleClientChat;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

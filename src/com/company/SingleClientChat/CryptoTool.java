@@ -1,7 +1,6 @@
-package com.company.ClientServerChat;
+package com.company.SingleClientChat;
 
 import org.bouncycastle.util.encoders.Hex;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;

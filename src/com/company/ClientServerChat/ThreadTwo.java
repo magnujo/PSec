@@ -35,7 +35,7 @@ public class ThreadTwo implements Runnable{
                 while (true) {
                     String msgFromClient = bufferedReader.readLine();
 
-                    System.out.println("Client: " + msgFromClient);
+                    System.out.println("Client2: " + msgFromClient);
 
                     bufferedWriter.write("Message received");
                     bufferedWriter.newLine();

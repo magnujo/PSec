@@ -1,11 +1,11 @@
-package com.company.ClientServerChat;
+package com.company.SingleClientChat;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class ClientFX extends Application {
-//client server connections code from https://www.youtube.com/watch?v=gchR3DpY-8Q
+
 
     public void start(Stage stage) {
         stage.setTitle("Chat App");

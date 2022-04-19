@@ -12,7 +12,7 @@ public class Server {
         Thread t2 = new Thread(threadOne);
 
         t1.start();
-        //t2.start();
+        t2.start();
 
 
     }
