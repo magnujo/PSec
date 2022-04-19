@@ -14,6 +14,9 @@ public class ClientFX extends Application {
         Scene scene = new Scene(view, 700, 500);
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(e -> {
+            view.close();
+        });
     }
 
 }

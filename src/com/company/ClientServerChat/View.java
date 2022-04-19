@@ -10,6 +10,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
+
 public class View extends BorderPane {
 
     double windowHeight = 700;
@@ -19,10 +21,11 @@ public class View extends BorderPane {
     TextArea textArea;
     VBox chatBox;
     CryptoTool ct;
-
-
+    Client client;
 
     public View(CryptoTool ct) {
+        client = new Client();
+        client.connect();
         this.ct = ct;
         //Center:
         //Chat pane (area to display chat messages)
@@ -64,12 +67,16 @@ public class View extends BorderPane {
 
     }
 
+    public void close(){
+        client.disconnect();
+    }
 
+    String send() throws IOException {
 
-    String send(){
         String text = textArea.getText();
         HBox messageBox = new HBox();
         Label label = new Label(text);
+        client.sendMessage(text);
         messageBox.getChildren().add(label);
         chatBox.getChildren().add(messageBox);
         textArea.clear();
@@ -94,7 +101,11 @@ class SendButton extends Button {
         setText("Send");
         setOnAction(e -> {
             View view = (View) getParent().getParent().getParent();
-            view.send();
+            try {
+                view.send();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
     }
 }
