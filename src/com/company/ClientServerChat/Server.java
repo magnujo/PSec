@@ -5,11 +5,11 @@ package com.company.ClientServerChat;
 public class Server {
 
     public static void main(String[] args)  {
-        ThreadOne threadOne = new ThreadOne();
-        ThreadTwo threadTwo = new ThreadTwo();
-        ClientFX clientFX = new ClientFX();
-        Thread t1 = new Thread(threadTwo);
-        Thread t2 = new Thread(threadOne);
+        ClientHandler ch1 = new ClientHandler(1234);
+        ClientHandler ch2 = new ClientHandler(1235);
+
+        Thread t1 = new Thread(ch2);
+        Thread t2 = new Thread(ch1);
 
         t1.start();
         t2.start();

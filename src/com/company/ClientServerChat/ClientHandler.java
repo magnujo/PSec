@@ -4,7 +4,13 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ThreadOne implements Runnable {
+public class ClientHandler implements Runnable {
+    int port;
+
+    public ClientHandler(int port){
+        this.port = port;
+    }
+
     @Override
     public void run() {
         Socket socket = null;
@@ -15,35 +21,38 @@ public class ThreadOne implements Runnable {
         ServerSocket serverSocket = null;
 
         try {
-            serverSocket = new ServerSocket(1234);
+            serverSocket = new ServerSocket(port);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+
         while(true){
 
             try {
-
                 socket = serverSocket.accept();
+
 
                 inputStreamReader = new InputStreamReader(socket.getInputStream());
                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 
                 bufferedReader = new BufferedReader(inputStreamReader);
                 bufferedWriter = new BufferedWriter(outputStreamWriter);
+                System.out.println("Client connected to port " + port);
 
                 while (true) {
                     String msgFromClient = bufferedReader.readLine();
 
-                    System.out.println("Client: " + msgFromClient);
+                    if(msgFromClient == null) break;
+
+                    System.out.println("Client: " +  msgFromClient);
 
                     bufferedWriter.write("Message received");
                     bufferedWriter.newLine();
                     bufferedWriter.flush();
-
-                    if (msgFromClient.equalsIgnoreCase("BYE")) break;
-
                 }
+                System.out.println("Client disconnected from port " + port);
 
                 socket.close();
                 inputStreamReader.close();

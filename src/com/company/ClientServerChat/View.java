@@ -74,12 +74,14 @@ public class View extends BorderPane {
     String send() throws IOException {
 
         String text = textArea.getText();
-        HBox messageBox = new HBox();
-        Label label = new Label(text);
-        client.sendMessage(text);
-        messageBox.getChildren().add(label);
-        chatBox.getChildren().add(messageBox);
-        textArea.clear();
+        if (text != null && !text.equalsIgnoreCase("")){
+            HBox messageBox = new HBox();
+            Label label = new Label(text);
+            client.sendMessage(text);
+            messageBox.getChildren().add(label);
+            chatBox.getChildren().add(messageBox);
+            textArea.clear();
+        }
         return text;
     }
 
