@@ -3,6 +3,7 @@ package com.company.ClientServerChat;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+//This class contains code from WittCodes tutorial (https://www.youtube.com/watch?v=gchR3DpY-8Q)
 
 public class ClientHandler implements Runnable {
     int port;
@@ -63,8 +64,6 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
 
         }
 

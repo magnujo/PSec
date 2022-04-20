@@ -3,7 +3,8 @@ package com.company.ClientServerChat;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
-//Socket code is from WittCode (https://www.youtube.com/watch?v=gchR3DpY-8Q)
+
+//This class includes code from WittCode's tutorial (https://www.youtube.com/watch?v=gchR3DpY-8Q)
 public class Client {
     Socket socket;
     InputStreamReader inputStreamReader;
@@ -11,15 +12,17 @@ public class Client {
     BufferedReader bufferedReader;
     BufferedWriter bufferedWriter;
     Scanner scanner;
+    int port;
 
 
-    public Client(){
+    public Client(int port){
         scanner = new Scanner(System.in);
+        this.port = port;
     }
 
     public void connect() {
         try {
-            socket = new Socket("localhost", 1234);
+            socket = new Socket("localhost", port);
             inputStreamReader = new InputStreamReader(socket.getInputStream());
             outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 

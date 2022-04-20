@@ -23,8 +23,8 @@ public class View extends BorderPane {
     CryptoTool ct;
     Client client;
 
-    public View(CryptoTool ct) {
-        client = new Client();
+    public View(CryptoTool ct, Client client) {
+        this.client = client;
         client.connect();
         this.ct = ct;
         //Center:

@@ -1,6 +1,6 @@
 package com.company.ClientServerChat;
 
-//Socket code is from WittCode (https://www.youtube.com/watch?v=gchR3DpY-8Q)
+
 
 public class Server {
 
@@ -13,7 +13,5 @@ public class Server {
 
         t1.start();
         t2.start();
-
-
     }
 }
