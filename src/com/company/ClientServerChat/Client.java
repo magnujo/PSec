@@ -11,12 +11,9 @@ public class Client {
     OutputStreamWriter outputStreamWriter;
     BufferedReader bufferedReader;
     BufferedWriter bufferedWriter;
-    Scanner scanner;
     int port;
 
-
     public Client(int port){
-        scanner = new Scanner(System.in);
         this.port = port;
     }
 
@@ -55,7 +52,6 @@ public class Client {
     }
 
     public boolean sendMessage(String msg) throws IOException {
-
         bufferedWriter.write(msg);
         bufferedWriter.newLine();
         bufferedWriter.flush();
@@ -65,6 +61,5 @@ public class Client {
         if(msg.equalsIgnoreCase("BYE")) return false;
         else return true;
     }
-
 }
 

@@ -149,8 +149,6 @@ public class CryptoTool {
                 System.out.println("Slut");
                 return ciphertext_iv;
 
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -424,7 +422,6 @@ public class CryptoTool {
         catch (Exception e) { e.printStackTrace(); }
     }
 
-
     public boolean verifySHA256(byte[] hashvalue, byte[] plaintext){
         try {
             // Verifying hash
@@ -446,5 +443,4 @@ public class CryptoTool {
         System.out.println("Verification error");
         return false;
     }
-
 }

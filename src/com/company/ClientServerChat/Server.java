@@ -5,6 +5,11 @@ package com.company.ClientServerChat;
 public class Server {
 
     public static void main(String[] args)  {
+        Server server = new Server();
+        server.run();
+    }
+
+    public void run(){
         ClientHandler ch1 = new ClientHandler(1234);
         ClientHandler ch2 = new ClientHandler(1235);
 
@@ -14,4 +19,5 @@ public class Server {
         t1.start();
         t2.start();
     }
+
 }

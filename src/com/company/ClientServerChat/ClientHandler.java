@@ -28,12 +28,9 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         }
 
-
         while(true){
-
             try {
                 socket = serverSocket.accept();
-
 
                 inputStreamReader = new InputStreamReader(socket.getInputStream());
                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
@@ -64,8 +61,6 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 }

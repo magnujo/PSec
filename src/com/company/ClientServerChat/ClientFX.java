@@ -8,7 +8,7 @@ public class ClientFX extends Application {
 //client server connections code from https://www.youtube.com/watch?v=gchR3DpY-8Q
 
     public void start(Stage stage) {
-        stage.setTitle("Chat App");
+        stage.setTitle("Client 1");
         CryptoTool ct = new CryptoTool();
         Client client = new Client(1234);
         View view = new View(ct, client);
@@ -19,6 +19,5 @@ public class ClientFX extends Application {
             view.close();
         });
     }
-
 }
 
