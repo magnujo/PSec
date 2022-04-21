@@ -11,6 +11,9 @@ public class Client {
     OutputStreamWriter outputStreamWriter;
     BufferedReader bufferedReader;
     BufferedWriter bufferedWriter;
+    DataOutputStream dOut;
+    OutputStream socketOutputStream;
+
     int port;
 
     public Client(int port){
@@ -22,7 +25,8 @@ public class Client {
             socket = new Socket("localhost", port);
             inputStreamReader = new InputStreamReader(socket.getInputStream());
             outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-
+            dOut = new DataOutputStream(socket.getOutputStream()); // output for bytes
+            socketOutputStream = socket.getOutputStream(); //output for bytes
             bufferedReader = new BufferedReader(inputStreamReader);
             bufferedWriter = new BufferedWriter(outputStreamWriter);
         } catch (IOException e) {
@@ -31,6 +35,8 @@ public class Client {
                 if (socket != null) socket.close();
                 if (inputStreamReader != null) inputStreamReader.close();
                 if (outputStreamWriter != null) outputStreamWriter.close();
+                if (dOut != null) dOut.close();
+                if (socketOutputStream != null) socketOutputStream.close();
                 if (bufferedReader != null) bufferedReader.close();
                 if (bufferedWriter != null) bufferedWriter.close();
             } catch (IOException e2) {
@@ -39,11 +45,24 @@ public class Client {
         }
     }
 
+
+
+    public void sendKey(byte[] key) throws IOException {
+        System.out.println(key.length);
+        dOut.writeInt(key.length);
+        dOut.write(key);
+        dOut.flush();
+
+        System.out.println("Server: " + bufferedReader.readLine());
+    }
+
     public void disconnect(){
         try {
             if (socket != null) socket.close();
             if (inputStreamReader != null) inputStreamReader.close();
             if (outputStreamWriter != null) outputStreamWriter.close();
+            if (dOut != null) dOut.close();
+            if (socketOutputStream != null) socketOutputStream.close();
             if (bufferedReader != null) bufferedReader.close();
             if (bufferedWriter != null) bufferedWriter.close();
         } catch (IOException e) {

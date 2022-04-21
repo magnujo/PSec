@@ -25,7 +25,6 @@ public class View extends BorderPane {
 
     public View(CryptoTool ct, Client client) {
         this.client = client;
-        client.connect();
         this.ct = ct;
         //Center:
         //Chat pane (area to display chat messages)

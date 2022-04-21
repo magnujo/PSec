@@ -11,6 +11,8 @@ public class ClientFX extends Application {
         stage.setTitle("Client 1");
         CryptoTool ct = new CryptoTool();
         Client client = new Client(1234);
+        client.connect();
+
         View view = new View(ct, client);
         Scene scene = new Scene(view, 700, 500);
         stage.setScene(scene);

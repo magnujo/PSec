@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 public class CryptoTool {
@@ -22,14 +24,38 @@ public class CryptoTool {
     KeyPairGenerator generator;
     KeyPair keyPair;
     SecretKeySpec aesSymKey;
+    byte[] encryptedSymKey;
+    public PublicKey pubkey;
 
     CryptoTool() {
         generateIv();
         generateAsymmetricKeyPair();
         aesSymKey = generateSymmetricKey();
+        byte[] rsa = rsaPublicKey.getEncoded();
+        encryptedSymKey = encryptKey(aesSymKey, rsaPublicKey);
+        System.out.println(rsaPublicKey.getFormat());
+
+
+        System.out.println("RSA Before encoding: " + rsaPublicKey.toString());
+        RSAPublicKey after = null;
+        try {
+            after = (RSAPublicKey) decodeKey(rsaPublicKey.getEncoded());
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        System.out.println("RSA After encoding: " + after.toString());
+
+        System.out.println("Pubkey before encoding: " + pubkey.toString());
+        try {
+            System.out.println("Pubkey after encoding: " + decodeKey(pubkey.getEncoded()));
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
-    public void generateIv(){
+    private void generateIv(){
         SecureRandom secureRandom = null;
         try {
             secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
@@ -43,7 +69,7 @@ public class CryptoTool {
         ivLength = iv.length;
     }
 
-    public void generateAsymmetricKeyPair(){
+    private void generateAsymmetricKeyPair(){
         //Generation assymetric RSA keys
         try {
             generator = KeyPairGenerator.getInstance("RSA", "BC");
@@ -52,11 +78,12 @@ public class CryptoTool {
         }
         generator.initialize(3072);
         keyPair = generator.generateKeyPair();
-        rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
+        pubkey = keyPair.getPublic();
+        rsaPublicKey = (RSAPublicKey) pubkey;
         rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
     }
 
-    public SecretKeySpec generateSymmetricKey() {
+    private SecretKeySpec generateSymmetricKey() {
         SecretKeySpec key = null;
         try {
             // generating random bytes
@@ -71,6 +98,12 @@ public class CryptoTool {
         return key;
     }
 
+    public static PublicKey decodeKey(byte[] encoded) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory f = KeyFactory.getInstance("RSA");
+        return f.generatePublic(new X509EncodedKeySpec(encoded));
+    }
+
+
     public void addKeyToKeyStore(String KeyPW, String alias, SecretKeySpec key, KeyStore ks){
         KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
         KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(KeyPW.toCharArray());
@@ -81,7 +114,7 @@ public class CryptoTool {
     }
 
     //encrypt a symmetric key using RSA.
-    public byte[] encryptKey() {
+    public byte[] encryptKey(SecretKeySpec aesSymKey, RSAPublicKey rsaPublicKey) {
         byte[] wrappedKey = new byte[0];
         try {
             Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPwithSHA256andMGF1Padding", "BC");
@@ -105,8 +138,12 @@ public class CryptoTool {
         return aesSymKey;
     }
 
+    public byte[] getEncryptedSymKey() {
+        return encryptedSymKey;
+    }
+
     //decrypt a symmetric key using RSA.
-    public SecretKeySpec decryptKey(byte[] wrappedKey) throws GeneralSecurityException {
+    public SecretKeySpec decryptKey(byte[] wrappedKey, RSAPrivateKey rsaPrivateKey) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPwithSHA256andMGF1Padding", "BC");
         cipher.init(Cipher.UNWRAP_MODE, rsaPrivateKey);
         return (SecretKeySpec)cipher.unwrap(wrappedKey, aesSymKey.getAlgorithm(), Cipher.SECRET_KEY);
@@ -308,7 +345,7 @@ public class CryptoTool {
                 Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
                 //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
                 cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
-                System.out.println("Encrypting using key: " + key.toString());
+                System.out.println("Encrypting using key: " + key);
                 byte[] ciphertext = cipher.doFinal(input);
                 System.out.println("Ciphertext length without hash: " + ciphertext.length);
 
