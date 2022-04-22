@@ -1,6 +1,10 @@
 To-do:
-Check om længder er det samme efter det er sendt.
+Se wittcode igen for inspiration.
+
+Evt lagre pubkey i fil.
+
 Prøv at crypter/decrypter med encodet->decodet pubkey.
+
 
 Prøv at initialiser alle algoritmer i CryptoTool constructer.
 

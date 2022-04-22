@@ -17,8 +17,10 @@ import org.apache.commons.lang3.SerializationUtils;
 
 public class ClientHandler implements Runnable {
     int port;
+    public RSAPublicKey rsaPublicKey;
 
     public ClientHandler(int port){
+        rsaPublicKey = null;
         this.port = port;
     }
 
@@ -31,7 +33,6 @@ public class ClientHandler implements Runnable {
         BufferedWriter bufferedWriter = null;
         ServerSocket serverSocket = null;
         DataInputStream dIn;
-        RSAPublicKey rsaPublicKey;
 
         try {
             serverSocket = new ServerSocket(port);
@@ -56,24 +57,36 @@ public class ClientHandler implements Runnable {
 
 
                 while (true) {
-                    if (dIn.readBoolean()){
+
+                    if (!dIn.readBoolean()) {System.out.println("Breaking out of loop"); break;}
+                    else {
+                        System.out.println("Receiving key");
                         int length = dIn.readInt();
                         if(length>0) {
                             byte[] input = new byte[length];
                             dIn.readFully(input, 0, input.length); // read the message
                             String sInput = new String(input);
                             if(input == null || sInput.equalsIgnoreCase("BYE")) break;
-                            System.out.println("Client: " + sInput);
-                            rsaPublicKey = (RSAPublicKey) CryptoTool.decodeKey(input);
-                            System.out.println("Transfered key: " + rsaPublicKey.toString());
-                            System.out.println("Transfered mod: " + rsaPublicKey.getModulus());
-                            System.out.println("Transfered exp: " + rsaPublicKey.getPublicExponent());
-                            System.out.println("Transfered params: " + rsaPublicKey.getParams());
-                        }
-                        else break;
-                    }
-                    else break;
+                            if(Server.rsaPublicKey == null) {
+                                System.out.println("Storing pub key on server");
+                                Server.rsaPublicKey = (RSAPublicKey) CryptoTool.decodeRSAKey(input);
+                            }
+                            System.out.println("Serverside publickey : " + Server.rsaPublicKey.toString());
 
+                            if(rsaPublicKey != null){
+                                /*
+                                System.out.println("Transfered key: " + rsaPublicKey.toString());
+                                System.out.println("Transfered mod: " + rsaPublicKey.getModulus());
+                                System.out.println("Transfered mod len: " + rsaPublicKey.getModulus().bitLength());
+                                System.out.println("Transfered exp: " + rsaPublicKey.getPublicExponent());
+                                System.out.println("Transfered exp len: " + rsaPublicKey.getPublicExponent().bitLength());
+                                System.out.println("Transfered params: " + rsaPublicKey.getParams());*/
+                            }
+                        }
+                        else{
+                            System.out.println("Length too small");
+                            break;}
+                    }
 
                     bufferedWriter.write("Message received");
                     bufferedWriter.newLine();
@@ -88,11 +101,7 @@ public class ClientHandler implements Runnable {
                 bufferedWriter.close();
                 dIn.close();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (InvalidKeySpecException e) {
+            } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
             }
         }

@@ -45,9 +45,18 @@ public class Client {
         }
     }
 
-
-
     public void sendKey(byte[] key) throws IOException {
+        System.out.println(key.length);
+        dOut.writeBoolean(true);
+        dOut.writeInt(key.length);
+        dOut.write(key);
+        dOut.flush();
+
+
+        System.out.println("Server: " + bufferedReader.readLine());
+    }
+
+    public void receiveKey(byte[] key) throws IOException {
         System.out.println(key.length);
         dOut.writeBoolean(true);
         dOut.writeInt(key.length);
@@ -60,6 +69,8 @@ public class Client {
 
     public void disconnect(){
         try {
+            dOut.writeBoolean(false);
+            dOut.flush();
             if (socket != null) socket.close();
             if (inputStreamReader != null) inputStreamReader.close();
             if (outputStreamWriter != null) outputStreamWriter.close();
@@ -73,6 +84,7 @@ public class Client {
     }
 
     public boolean sendMessage(String msg) throws IOException {
+        dOut.writeBoolean(true);
         bufferedWriter.write(msg);
         bufferedWriter.newLine();
         bufferedWriter.flush();

@@ -10,7 +10,6 @@ import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -35,42 +34,6 @@ public class CryptoTool {
         aesSymKey = generateSymmetricKey();
         byte[] rsa = rsaPublicKey.getEncoded();
         encryptedSymKey = encryptKey(aesSymKey, rsaPublicKey);
-        System.out.println(rsaPublicKey.getFormat());
-
-        System.out.println("Modulues: " + rsaPublicKey.getModulus());
-        System.out.println("Exponenent: " + rsaPublicKey.getPublicExponent());
-        System.out.println("Params: " + rsaPublicKey.getParams());
-
-        System.out.println("RSA Before encoding: " + rsaPublicKey);
-
-        RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(rsaPublicKey.getModulus(), rsaPublicKey.getPublicExponent());
-        KeyFactory keyFactory = null;
-        try {
-            keyFactory = KeyFactory.getInstance("RSA");
-            RSAPublicKey kfkey = (RSAPublicKey) keyFactory.generatePublic(rsaPublicKeySpec);
-            System.out.println("kf key: " + kfkey.toString());
-            System.out.println("kf modulus: " + kfkey.getModulus());
-            System.out.println("kf exponent: " + kfkey.getPublicExponent());
-            System.out.println("kf params: " + kfkey.getParams());
-
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-
-        RSAPublicKey after = null;
-        try {
-            after = (RSAPublicKey) decodeKey(rsaPublicKey.getEncoded());
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-        System.out.println("RSA After encoding: " + after.toString());
-
-        System.out.println("Pubkey before encoding: " + pubkey.toString());
-        try {
-            System.out.println("Pubkey after encoding: " + decodeKey(pubkey.getEncoded()));
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
     }
 
     private void generateIv(){
@@ -116,9 +79,14 @@ public class CryptoTool {
         return key;
     }
 
-    public static PublicKey decodeKey(byte[] encoded) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static PublicKey decodeRSAKey(byte[] encoded) throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyFactory f = KeyFactory.getInstance("RSA");
         return f.generatePublic(new X509EncodedKeySpec(encoded));
+    }
+
+    public static PrivateKey decodeAESKey(byte[] encoded) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory f = KeyFactory.getInstance("AES");
+        return f.generatePrivate(new X509EncodedKeySpec(encoded));
     }
 
 
