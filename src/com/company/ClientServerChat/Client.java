@@ -49,9 +49,11 @@ public class Client {
 
     public void sendKey(byte[] key) throws IOException {
         System.out.println(key.length);
+        dOut.writeBoolean(true);
         dOut.writeInt(key.length);
         dOut.write(key);
         dOut.flush();
+
 
         System.out.println("Server: " + bufferedReader.readLine());
     }

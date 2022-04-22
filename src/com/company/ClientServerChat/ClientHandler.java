@@ -56,20 +56,23 @@ public class ClientHandler implements Runnable {
 
 
                 while (true) {
-                    int length = dIn.readInt();
-                    if(length>0) {
-                        byte[] input = new byte[length];
-                        dIn.readFully(input, 0, input.length); // read the message
-                        String sInput = new String(input);
-                        if(input == null || sInput.equalsIgnoreCase("BYE")) break;
-                        System.out.println("Client: " + sInput);
-                        rsaPublicKey = (RSAPublicKey) CryptoTool.decodeKey(input);
-                        System.out.println(rsaPublicKey.toString());
+                    if (dIn.readBoolean()){
+                        int length = dIn.readInt();
+                        if(length>0) {
+                            byte[] input = new byte[length];
+                            dIn.readFully(input, 0, input.length); // read the message
+                            String sInput = new String(input);
+                            if(input == null || sInput.equalsIgnoreCase("BYE")) break;
+                            System.out.println("Client: " + sInput);
+                            rsaPublicKey = (RSAPublicKey) CryptoTool.decodeKey(input);
+                            System.out.println("Transfered key: " + rsaPublicKey.toString());
+                            System.out.println("Transfered mod: " + rsaPublicKey.getModulus());
+                            System.out.println("Transfered exp: " + rsaPublicKey.getPublicExponent());
+                            System.out.println("Transfered params: " + rsaPublicKey.getParams());
+                        }
+                        else break;
                     }
                     else break;
-
-
-                    //String msgFromClient = bufferedReader.readLine();
 
 
                     bufferedWriter.write("Message received");
@@ -83,6 +86,7 @@ public class ClientHandler implements Runnable {
                 outputStreamWriter.close();
                 bufferedReader.close();
                 bufferedWriter.close();
+                dIn.close();
 
             } catch (IOException e) {
                 e.printStackTrace();

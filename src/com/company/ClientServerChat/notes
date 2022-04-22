@@ -1,12 +1,15 @@
 To-do:
+Check om længder er det samme efter det er sendt.
 Prøv at crypter/decrypter med encodet->decodet pubkey.
 
 Prøv at initialiser alle algoritmer i CryptoTool constructer.
 
 
 Spørg niels:
-Decoding /encoding af pubkey? Hvorfor ændrer den sig af det?
+Decoding /encoding af pubkey? Hvorfor ændrer den sig af det? Svar: Der er nok noget galt med .toString().
 Skal alt køre fra 1 main eller er det fint jeg skrive i rapporten at du først skal køre server, client1 og client 2 seperat?
-Rapport på engelsk?
-Ideer til hvordan jeg skelner mellem rsa nøgle og beskeder?
-WittCode reference ok?
+Rapport på engelsk? Svar: Engelsk eller dansk
+Ideer til hvordan jeg skelner mellem rsa nøgle og beskeder? Svar: 2 metoder "sendKey", "sendMessage"
+WittCode reference ok? Svar: Skriv det i rapporten også.
+
+

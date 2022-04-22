@@ -57,9 +57,6 @@ public class CryptoTool {
             e.printStackTrace();
         }
 
-
-
-
         RSAPublicKey after = null;
         try {
             after = (RSAPublicKey) decodeKey(rsaPublicKey.getEncoded());
@@ -67,7 +64,6 @@ public class CryptoTool {
             e.printStackTrace();
         }
         System.out.println("RSA After encoding: " + after.toString());
-
 
         System.out.println("Pubkey before encoding: " + pubkey.toString());
         try {
