@@ -1,10 +1,12 @@
-package com.company.exercise.fileencrypter;
+package com.company.exercise.FileEncrypterMVC;
 
 import org.bouncycastle.util.encoders.Hex;
+
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.file.LinkPermission;
+import java.awt.desktop.AboutEvent;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -69,8 +71,6 @@ public class CryptoTool {
                 // writing
                 library.FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
                 System.out.println("Slut");
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -107,29 +107,42 @@ public class CryptoTool {
         }
     }
 
-    public void decryptFile(String filepath, String algorithm, boolean hashing, SecretKeySpec key) {
+    public String decryptFile(String filepath, String algorithm, boolean hashing, SecretKeySpec key) {
 
         this.algorithm = algorithm.toUpperCase();
 
         if (hashing) {
             System.out.println("Decrypting and dehashing using Key: " + Arrays.toString(key.getEncoded()));
             try {
+
                 // Reading
                 System.out.println(filepath);
                 byte[] input = library.FileUtil.readAllBytes(filepath);
-                System.out.println(input);
-                byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
-                byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
-                System.out.println("IV: " + Arrays.toString(iv));
+                System.out.println("Input: " + Arrays.toString(Hex.encode(input)));
 
                 //Tampering test
-                input[56] = 10;
+                //input[1] = 10;
+
+                System.out.println("Input: " + Arrays.toString(Hex.encode(input)));
+
+
+                System.out.println(input);
+                byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
+
+
+                byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
+                System.out.println("IV: " + Arrays.toString(iv));
+                System.out.println("IV: " + Arrays.toString(Hex.encode(iv)));
+                System.out.println("IV: " + Hex.toHexString(iv));
+
+                System.out.println("Ciphertext: " + Hex.toHexString(ciphertext));
 
                 // Decrypting
                 Cipher cipher = Cipher.getInstance(algorithm + "/CBC/PKCS5Padding", "BC");
                 //SecretKeySpec key = new SecretKeySpec(keyBytes, algorithm);
                 cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
                 byte[] output = cipher.doFinal(ciphertext);
+                System.out.println("Decrypted output: " + Hex.toHexString(output));
 
                 System.out.println("Decryptet text length: " + output.length);
 
@@ -137,13 +150,17 @@ public class CryptoTool {
                 byte[] hashValue = Arrays.copyOfRange(output, output.length - 32, output.length);
                 byte[] plainText = Arrays.copyOfRange(output, 0, output.length - 32);
                 System.out.println("Hash length from file: " + hashValue.length);
-                System.out.println("Hash value from file: " + Arrays.toString(hashValue));
+                System.out.println("Hash value from file: " + Hex.toHexString(hashValue));
+
+                System.out.println("Plaintext: " + Hex.toHexString(plainText));
 
                 // Checking the integrity before writing
-                verifySHA256(hashValue, plainText);
-                library.FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
-
-            } catch (Exception e) { e.printStackTrace();}
+                if(verifySHA256(hashValue, plainText)) {
+                    library.FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
+                    return "FileGood";
+                }
+                else return "FileChanged";
+            } catch (BadPaddingException e) {return "WrongKey";} catch (Exception e) { e.printStackTrace();}
         }
 
         else {
@@ -153,7 +170,7 @@ public class CryptoTool {
             // Reading
             System.out.println(filepath);
             byte[] input = library.FileUtil.readAllBytes(filepath);
-            System.out.println(input);
+
             byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
             byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
             System.out.println("IV: " + Arrays.toString(iv));
@@ -164,10 +181,13 @@ public class CryptoTool {
             cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
             byte[] output = cipher.doFinal(ciphertext);
 
-            // Writing (removes the .AES from the filepath)
+            // Writing (removes the .AES from the filepath
             library.FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
-            } catch (Exception e) { e.printStackTrace();}
+            return "FileGood";
+            } catch (BadPaddingException e) {return "WrongKey";} catch (Exception e) { e.printStackTrace();}
         }
+        System.out.println("Errror: program should not reach this point");
+        return "WrongKey";
     }
 
     void computeSHA256(String filepath){
@@ -204,23 +224,31 @@ public class CryptoTool {
     }
 
 
-    void verifySHA256(byte[] hashvalue, byte[] plaintext){
+    boolean verifySHA256(byte[] hashvalue, byte[] plaintext){
         try {
             // Verifying hash
             MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
-            digest.update(plaintext);
-            byte[] computedHashValue = digest.digest();
+            //digest.update(plaintext);
+            byte[] computedHashValue = digest.digest(plaintext);
+
+            System.out.println("Original hash and checked hash:");
+            System.out.println(Hex.toHexString(hashvalue));
+            System.out.println(Hex.toHexString(computedHashValue));
 
             if (MessageDigest.isEqual(computedHashValue, hashvalue)) {
                 System.out.println("Hash values are equal");
+                return true;
 
 
             } else {
                 System.out.println("Hash values are not equal");
-
+                return false;
             }
         }
         catch (Exception e) { e.printStackTrace(); }
+
+        System.out.println("Some error happened while verifying hash.");
+        return false;
 
     }
 

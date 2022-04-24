@@ -1,15 +1,8 @@
-Ide: Encrypted chat app (like signal)
 
-Sockets til at forbinde
-
-Chat beskeder lagret på en fil som crypteres
-
-Window er delt i 2 hvor den ene side skal repræsentere client 1 og den anden klient 2.
-
-PW manager GUI er MVC.
-
-
+TODO:
 append iv to the end of the encrypted file
+
+
 
 encrypting using Key: [8, -117, -121, -30, -94, 108, 52, 12, 46, 25, -90, -60, 110, -68, -1, 99]
 Decrypting using Key: [8, -117, -121, -30, -94, 108, 52, 12, 46, 25, -90, -60, 110, -68, -1, 99]

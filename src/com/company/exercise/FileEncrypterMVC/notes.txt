@@ -1,0 +1,10 @@
+TODO:
+append iv to the end of the encrypted file
+pop up/ alertbox interface?
+Test om keys kan "crossdecrypt"
+
+IV: [-4, 82, -33, 60, -119, -39, 50, 104, 62, -62, 46, -60, 47, -12, -32, -103]
+Hash length: 32
+Hash value: [-5, 100, -48, 115, 19, -90, 28, -7, -99, -32, -73, -19, -76, 82, 116, -96, 92, -85, -114, 22, 85, 48, -110, -74, 17, 76, -73, 43, -55, -126, 23, 5]
+Plaintext length with hash: 6550
+Ciphertext length with hash: 6560
