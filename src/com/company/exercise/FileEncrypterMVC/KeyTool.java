@@ -35,6 +35,7 @@ public class KeyTool {
         try {
             ks = KeyStore.getInstance("BKS", "BC");
             ks.load(null, null);
+            store();
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -137,6 +138,14 @@ public class KeyTool {
             key = (SecretKeySpec) ks.getKey(alias, pw.toCharArray());
         } catch (UnrecoverableKeyException e) { AlertBox.display("Wrong Password", "Wrong password");}catch (Exception e) { e.printStackTrace(); }
         return key;
+    }
+
+    public void deleteKey(String alias){
+        try {
+            ks.deleteEntry(alias);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean checkKeyPW (String alias, String pw){

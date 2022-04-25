@@ -2,6 +2,7 @@ package com.company.exercise.FileEncrypterMVC;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -13,6 +14,8 @@ public class CryptoApp extends Application {
     String fileName = "Very confidential hacking.pdf";
     Stage window, window2;
     Scene loginScene, cryptoScene, registerScene;
+    CryptoTool cryptoTool;
+    KeyTool keyTool;
 
     public static void main(String[] args) {
         launch(args);
@@ -21,18 +24,20 @@ public class CryptoApp extends Application {
     public void start(Stage primaryStage) {
         window = primaryStage;
         window.setTitle("CryptR");
-        CryptoTool cryptoTool = new CryptoTool();
-        KeyTool keyTool = new KeyTool();
+        window2 = new Stage();
+        window2.setTitle("Register");
+        cryptoTool = new CryptoTool();
+        keyTool = new KeyTool();
 
-        CryptoView cryptoView = new CryptoView(cryptoTool, keyTool);
+        if(!keyTool.fileCheck()){
+            System.out.println("hej");
+            RegisterView registerView = new RegisterView(keyTool, window2);
+            registerScene = new Scene(registerView, 300, 150);
+            window2.setScene(registerScene);
+            window2.show();
+        }
+        if(keyTool.fileCheck()) initCryptoView();
 
-        cryptoScene = new Scene(cryptoView, 500, 70);
-
-        window.setScene(cryptoScene);
-        window.setOnCloseRequest(e -> {
-            cryptoView.close();
-        });
-        window.show();
     }
 
     public void testCase(File file) {
@@ -40,5 +45,17 @@ public class CryptoApp extends Application {
             System.out.println("Test case succeeded");
         else System.out.println("Test case failed");
     }
+
+    public void initCryptoView() {
+        CryptoView cryptoView = new CryptoView(cryptoTool, keyTool);
+        cryptoScene = new Scene(cryptoView, 500, 70);
+        window.setScene(cryptoScene);
+        window.setOnCloseRequest(e -> {
+            cryptoView.close();
+        });
+        window.show();
+    }
+
+
 }
 

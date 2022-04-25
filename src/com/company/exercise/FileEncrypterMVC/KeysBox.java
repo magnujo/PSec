@@ -28,7 +28,7 @@ public class KeysBox {
         pwBox = new PWBox();
     }
 
-    public void display(String title, String message){
+    public void display(String title, String message, boolean deleteFunction){
         buttonPressed = false;
         closed = false;
         window = new Stage();
@@ -44,35 +44,66 @@ public class KeysBox {
         }
 
         if (keyTool.size() > 0) {
-            try {
-                for (Iterator<String> i = keyTool.getKeyAliases().asIterator(); i.hasNext(); ) {
-                    String alias = i.next();
-                    Button b = new Button(alias);
-                    b.setOnAction(e -> {
+            if(deleteFunction) {
+                try {
+                    for (Iterator<String> i = keyTool.getKeyAliases().asIterator(); i.hasNext(); ) {
+                        String alias = i.next();
+                        Button b = new Button(alias);
+                        b.setOnAction(e -> {
+                            pwBox.display("Enter password", "Enter password for key: " + alias);
+                            if (!pwBox.isClosed()) {
+                                buttonPressed = true;
+                                System.out.println("Alias: " + alias);
+                                String pw = pwBox.getPW();
+                                System.out.println("Password: " + pwBox.getPW());
+                                isPWCorrect = keyTool.checkKeyPW(alias, pw);
 
-                        pwBox.display("Enter password", "Enter password for key: " + alias);
-                        if (!pwBox.isClosed()) {
-                            buttonPressed = true;
-                            System.out.println("Alias: " + alias);
-                            String pw = pwBox.getPW();
-                            System.out.println("Password: " + pwBox.getPW());
-                            isPWCorrect = keyTool.checkKeyPW(alias, pw);
-
-                            if (isPWCorrect) {
-                                key = keyTool.getKey(alias, pw);
-                                System.out.println("Key: " + key.toString());
+                                if (isPWCorrect) {
+                                    keyTool.deleteKey(alias);
+                                }
+                                else {
+                                    AlertBox.display("Wrong Password", "Wrong Password");
+                                    window.close();
+                                }
                             }
-                            else {
-                                AlertBox.display("Wrong Password", "Wrong Password");
-                                window.close();
-                            }
-                        }
+                            if (pwBox.buttonPressed) window.close();
+                        });
+                        items.add(b);
+                    }
+                }catch (KeyStoreException e) {e.printStackTrace();}
+            }
 
-                        if (pwBox.buttonPressed) window.close();
-                    });
-                    items.add(b);
-                }
-            }catch (KeyStoreException e) {e.printStackTrace();}
+            else{
+                try {
+                    for (Iterator<String> i = keyTool.getKeyAliases().asIterator(); i.hasNext(); ) {
+                        String alias = i.next();
+                        Button b = new Button(alias);
+                        b.setOnAction(e -> {
+
+                            pwBox.display("Enter password", "Enter password for key: " + alias);
+                            if (!pwBox.isClosed()) {
+                                buttonPressed = true;
+                                System.out.println("Alias: " + alias);
+                                String pw = pwBox.getPW();
+                                System.out.println("Password: " + pwBox.getPW());
+                                isPWCorrect = keyTool.checkKeyPW(alias, pw);
+
+                                if (isPWCorrect) {
+                                    key = keyTool.getKey(alias, pw);
+                                    System.out.println("Key: " + key.toString());
+                                }
+                                else {
+                                    AlertBox.display("Wrong Password", "Wrong Password");
+                                    window.close();
+                                }
+                            }
+
+                            if (pwBox.buttonPressed) window.close();
+                        });
+                        items.add(b);
+                    }
+                }catch (KeyStoreException e) {e.printStackTrace();}
+            }
         }
 
 

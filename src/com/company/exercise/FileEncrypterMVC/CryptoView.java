@@ -19,8 +19,6 @@ public class CryptoView extends HBox {
     KeysBox keysBox;
     CreateKeyBox createKeyBox;
 
-
-
     public CryptoView(CryptoTool cryptoTool, KeyTool keyTool) {
 
         this.cryptoTool = cryptoTool;
@@ -29,14 +27,6 @@ public class CryptoView extends HBox {
         fileChooser.setInitialDirectory(new File(dir));
         keysBox = new KeysBox(keyTool);
         createKeyBox = new CreateKeyBox();
-        if(keyTool.fileCheck()) {
-            System.out.println("loading store..");
-            keyTool.load("pizza");
-        }
-        else {
-            System.out.println("creating store...");
-            keyTool.createKeyStore("pizza");
-        }
 
         setSpacing(10);
         getChildren().add(new EncryptButton());
@@ -44,24 +34,40 @@ public class CryptoView extends HBox {
         getChildren().add(new EncryptHashButton());
         getChildren().add(new DecryptDehashButton());
         getChildren().add(new CreateKeyButton());
+        getChildren().add(new DeleteKeyButton());
         setAlignment(Pos.CENTER);
     }
 
     void createKey(){
         createKeyBox.display("New Key", "Enter password for new key");
         if (!createKeyBox.isClosed()) {
-            System.out.println("genrating new key");
+            System.out.println("Generating new key");
             keyTool.generateAndAddKey(createKeyBox.getPW(), createKeyBox.getAlias());
+            AlertBox.display("Success!", "Key was created successfully");
         }
     }
 
+    void deleteKey(){
+        if (keyTool.size() > 0){
+            keysBox.display("Delete", "Select key to delete", true);
+            if (!keysBox.isClosed() && keysBox.isPWCorrect) {
+                keysBox.display("Delete", "Select key to delete", true);
+                }
+            }
+        else AlertBox.display("Error", "No keys were found");
+        }
+
     void encrypt(boolean hash){
         if (keyTool.size() > 0){
-            keysBox.display("Select key", "Select key");
+            keysBox.display("Select key", "Select key", false);
             if (!keysBox.isClosed() && keysBox.isPWCorrect) {
                 File selectedFile = null;
                 selectedFile = fileChooser.showOpenDialog(new Stage());
-                if (selectedFile != null) cryptoTool.encryptFile(selectedFile.getPath(), "AES", hash, keysBox.getKey());
+                if (selectedFile != null) {
+                    cryptoTool.encryptFile(selectedFile.getPath(), "AES", hash, keysBox.getKey());
+                    AlertBox.display("Success!", "File was encrypted successfully");
+                }
+                else AlertBox.display("Error", "Error");
             }
         }
         else AlertBox.display("Error", "Please create key before encrypting");
@@ -69,7 +75,7 @@ public class CryptoView extends HBox {
 
     void decrypt(boolean hash){
         if (keyTool.size() > 0){
-            keysBox.display("Select key", "Select key");
+            keysBox.display("Select key", "Select key", false);
             if (!keysBox.isClosed()) {
                 File selectedFile = null;
                 selectedFile = fileChooser.showOpenDialog(new Stage());
@@ -77,6 +83,7 @@ public class CryptoView extends HBox {
                     String res = cryptoTool.decryptFile(selectedFile.getPath(), "AES", hash, keysBox.getKey());
                     if (res.equalsIgnoreCase("WrongKey")) AlertBox.display("Wrong Key", "Failed to decrypt. Try using another key");
                     else if(res.equalsIgnoreCase("FileChanged")) AlertBox.display("Warning", "WARNING: Decryption failed: File has been changed by an untrusted party");
+                    else AlertBox.display("Success", "Decryption was successful");
                 }
             }
         }
@@ -98,6 +105,16 @@ class CreateKeyButton extends Button {
         setOnAction(e -> {
             CryptoView cv = (CryptoView) getParent();
             cv.createKey();
+        });
+    }
+}
+
+class DeleteKeyButton extends Button {
+    DeleteKeyButton(){
+        setText("Delete Key");
+        setOnAction(e -> {
+            CryptoView cv = (CryptoView) getParent();
+            cv.deleteKey();
         });
     }
 }
