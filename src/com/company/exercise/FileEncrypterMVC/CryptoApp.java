@@ -2,7 +2,6 @@ package com.company.exercise.FileEncrypterMVC;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -12,7 +11,7 @@ import java.io.File;
 public class CryptoApp extends Application {
     String dir = "src/com/company/exercise/files";
     String fileName = "Very confidential hacking.pdf";
-    Stage window, window2;
+    Stage window, registerWindow;
     Scene loginScene, cryptoScene, registerScene;
     CryptoTool cryptoTool;
     KeyTool keyTool;
@@ -24,20 +23,20 @@ public class CryptoApp extends Application {
     public void start(Stage primaryStage) {
         window = primaryStage;
         window.setTitle("CryptR");
-        window2 = new Stage();
-        window2.setTitle("Register");
         cryptoTool = new CryptoTool();
         keyTool = new KeyTool();
 
-        if(!keyTool.fileCheck()){
-            System.out.println("hej");
-            RegisterView registerView = new RegisterView(keyTool, window2);
-            registerScene = new Scene(registerView, 300, 150);
-            window2.setScene(registerScene);
-            window2.show();
+        if(keyTool.fileCheck()) {
+            LoginView loginView = new LoginView(keyTool);
+            loginView.show();
+            if(loginView.isLoggedIn) initCryptoView();
         }
-        if(keyTool.fileCheck()) initCryptoView();
 
+        if(!keyTool.fileCheck()){
+            RegisterView registerView = new RegisterView(keyTool);
+            registerView.show();
+            if (registerView.isRegistered) initCryptoView();
+        }
     }
 
     public void testCase(File file) {
@@ -55,7 +54,5 @@ public class CryptoApp extends Application {
         });
         window.show();
     }
-
-
 }
 

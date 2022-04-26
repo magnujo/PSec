@@ -1,7 +1,10 @@
 TODO:
+check key password complexity
+check masterpassword complexity
 pop up/ alertbox interface?
 Test om keys kan "crossdecrypt".
 Lav test der checker integrity;
+
 
 IV: [-4, 82, -33, 60, -119, -39, 50, 104, 62, -62, 46, -60, 47, -12, -32, -103]
 Hash length: 32
