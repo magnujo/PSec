@@ -1,6 +1,7 @@
 package com.company.exercise.FileEncrypterMVC;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 public class KeyTool {
     char[] storePW;
     String storePath = "keystore.bks";
+    String storePathTest = "keystoretest.bks";
     KeyStore ks;
 
     public boolean fileCheck(){
@@ -29,13 +31,13 @@ public class KeyTool {
     }
 
     // should run first time program is run. (Look for file keystore.bks and if not found this should run):
-    public void createKeyStore(String storePW) {
+    public void createKeyStore(String storePW, boolean test) {
         this.storePW = storePW.toCharArray();
 
         try {
             ks = KeyStore.getInstance("BKS", "BC");
             ks.load(null, null);
-            store();
+            store(test);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -56,11 +58,12 @@ public class KeyTool {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-
-    public void store() {
+    public void store(boolean test) {
         System.out.println("Storing...");
+        FileOutputStream fOut;
         try {
-            FileOutputStream fOut = new FileOutputStream(storePath);
+            if (test) {fOut = new FileOutputStream(storePathTest);}
+            else {fOut = new FileOutputStream(storePath);}
             printContent();
             ks.store(fOut, storePW);
             fOut.close();
@@ -68,6 +71,10 @@ public class KeyTool {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    public void deleteKeyStore(){
+        File f = new File(storePath);
+        f.delete();
+    }
 
     public KeyStore load(String storePW) {
         System.out.println("Loading...");
@@ -85,9 +92,7 @@ public class KeyTool {
 
         }
         catch (Exception e) {e.printStackTrace();}
-
         return ks;
-
     }
 
     public void printContent() throws KeyStoreException {
@@ -171,7 +176,6 @@ public class KeyTool {
         }
         return size;
     }
-
 
     public Enumeration<String> getKeyAliases() throws KeyStoreException {
     return ks.aliases();

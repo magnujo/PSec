@@ -55,7 +55,7 @@ public class RegisterView extends VBox {
 
         else {
             System.out.println("hegeheg");
-            keyTool.createKeyStore(registerPWField.getText());
+            keyTool.createKeyStore(registerPWField.getText(), false);
             isRegistered = true;
             System.out.println(registerPWField.getText());
             close();
