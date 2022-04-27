@@ -10,6 +10,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+/**
+ * The view where the user registers. Is only shown if the keystore file is not found when the program loads, otherwise
+ * LoginView is shown.
+ */
+
 public class RegisterView extends VBox {
     KeyTool keyTool;
     PasswordField registerPWField;
@@ -38,7 +43,7 @@ public class RegisterView extends VBox {
 
     public void show(){
         registerStage = new Stage();
-        registerScene = new Scene(this, 150, 100);
+        registerScene = new Scene(this, 350, 100);
         registerStage.setScene(registerScene);
         registerStage.showAndWait();
     }
@@ -54,10 +59,8 @@ public class RegisterView extends VBox {
         }
 
         else {
-            System.out.println("hegeheg");
             keyTool.createKeyStore(registerPWField.getText(), false);
             isRegistered = true;
-            System.out.println(registerPWField.getText());
             close();
         }
     }

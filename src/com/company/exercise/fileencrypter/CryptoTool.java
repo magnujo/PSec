@@ -1,10 +1,10 @@
 package com.company.exercise.fileencrypter;
 
+import com.company.exercise.FileEncrypterMVC.FileUtil;
 import org.bouncycastle.util.encoders.Hex;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.file.LinkPermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -40,7 +40,7 @@ public class CryptoTool {
             System.out.println("IV: " + Arrays.toString(iv));
             try {
                 // reading plaintext file
-                byte[] input = library.FileUtil.readAllBytes(filepath);
+                byte[] input = FileUtil.readAllBytes(filepath);
 
                 // computing hash value of plaintext
                 MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
@@ -67,7 +67,7 @@ public class CryptoTool {
                 System.arraycopy(iv, 0, ciphertext_iv, ciphertext.length, iv.length);
 
                 // writing
-                library.FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
+                FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
                 System.out.println("Slut");
 
 
@@ -81,7 +81,7 @@ public class CryptoTool {
             try {
 
                 // reading
-                byte[] input = library.FileUtil.readAllBytes(filepath);
+                byte[] input = FileUtil.readAllBytes(filepath);
                 System.out.println("Plaintext length without hash: " + input.length);
 
 
@@ -98,7 +98,7 @@ public class CryptoTool {
                 System.arraycopy(iv, 0, ciphertext_iv, ciphertext.length, iv.length);
 
                 // writing
-                library.FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
+                FileUtil.write(filepath + "." + algorithm, ciphertext_iv);
                 System.out.println("Slut");
 
             } catch (Exception e) {
@@ -116,7 +116,7 @@ public class CryptoTool {
             try {
                 // Reading
                 System.out.println(filepath);
-                byte[] input = library.FileUtil.readAllBytes(filepath);
+                byte[] input = FileUtil.readAllBytes(filepath);
                 System.out.println(input);
                 byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
                 byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
@@ -141,7 +141,7 @@ public class CryptoTool {
 
                 // Checking the integrity before writing
                 verifySHA256(hashValue, plainText);
-                library.FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
+                FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
 
             } catch (Exception e) { e.printStackTrace();}
         }
@@ -152,7 +152,7 @@ public class CryptoTool {
 
             // Reading
             System.out.println(filepath);
-            byte[] input = library.FileUtil.readAllBytes(filepath);
+            byte[] input = FileUtil.readAllBytes(filepath);
             System.out.println(input);
             byte[] iv = Arrays.copyOfRange(input, input.length - ivLength, input.length);
             byte[] ciphertext = Arrays.copyOfRange(input, 0, input.length - ivLength);
@@ -165,7 +165,7 @@ public class CryptoTool {
             byte[] output = cipher.doFinal(ciphertext);
 
             // Writing (removes the .AES from the filepath)
-            library.FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
+            FileUtil.write(filepath.substring(0, filepath.length() - algorithm.length()) + "test", output);
             } catch (Exception e) { e.printStackTrace();}
         }
     }
@@ -173,7 +173,7 @@ public class CryptoTool {
     void computeSHA256(String filepath){
         try {
             // reading plaintext file
-            byte [] input = library.FileUtil.readAllBytes(filepath);
+            byte [] input = FileUtil.readAllBytes(filepath);
 
             // computing hash value of plaintext
             MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
@@ -182,16 +182,16 @@ public class CryptoTool {
 
             // writing hash value to file
             String hashFileName = filepath;
-            library.FileUtil.write("sha256", hashFileName, hashValue);
+            FileUtil.write("sha256", hashFileName, hashValue);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
     void verifySHA256(String filepath){
         try {
             // Verifying hash
-            byte[] storedHashValue = library.FileUtil.readAllBytes(filepath + ".sha256");
+            byte[] storedHashValue = FileUtil.readAllBytes(filepath + ".sha256");
             MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
-            digest.update(library.FileUtil.readAllBytes(filepath));
+            digest.update(FileUtil.readAllBytes(filepath));
             byte[] computedHashValue = digest.digest();
             if (MessageDigest.isEqual(computedHashValue, storedHashValue)) {
                 System.out.println("Hash values are equal");

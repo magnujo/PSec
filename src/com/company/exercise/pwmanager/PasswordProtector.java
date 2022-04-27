@@ -1,13 +1,12 @@
 package com.company.exercise.pwmanager;
 
+import com.company.exercise.FileEncrypterMVC.FileUtil;
 import org.apache.commons.lang3.SerializationUtils;
-import org.bouncycastle.crypto.io.SignerOutputStream;
 import org.bouncycastle.util.encoders.Hex;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.sql.SQLOutput;
 
 public class PasswordProtector {
     String passwordFilePath;
@@ -29,7 +28,7 @@ public class PasswordProtector {
     public PasswordTable load() {
 
         PasswordTable pt;
-        byte[] encrypted = library.FileUtil.readAllBytes(passwordFilePath + "." + algoName + "." + ivString);
+        byte[] encrypted = FileUtil.readAllBytes(passwordFilePath + "." + algoName + "." + ivString);
         if (encrypted.length == 0) {
             System.out.println("Creating new Password Table...");
             pt = new PasswordTable();
@@ -83,6 +82,6 @@ public class PasswordProtector {
 
         byte[] serialized = SerializationUtils.serialize(pt);
         byte[] encrypted = encrypt(serialized);
-        library.FileUtil.write(passwordFilePath + "." + algoName + "." + ivString, encrypted);
+        FileUtil.write(passwordFilePath + "." + algoName + "." + ivString, encrypted);
     }
 }

@@ -1,10 +1,9 @@
-package library;
+package com.company.exercise.FileEncrypterMVC;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FileUtil {
-
 
     public static byte[] readAllBytes(String plaintextPath) {
         byte[] bytesRead = {};
@@ -18,8 +17,6 @@ public class FileUtil {
         String outFile = plaintextFileName + "." + algo_suffix + "." + iv_suffix;
         try {
             Files.write(Paths.get(outFile), output);
-            System.out.println(Paths.get(outFile));
-            System.out.println("writing...");
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -27,8 +24,6 @@ public class FileUtil {
         String outFile = plaintextFileName + "." + algo_suffix;
         try {
             Files.write(Paths.get(outFile), output);
-           // System.out.println(Paths.get(outFile));
-            System.out.println("writing to " + outFile);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -36,8 +31,6 @@ public class FileUtil {
         String outFile = plaintextFileName;
         try {
             Files.write(Paths.get(outFile), output);
-            System.out.println("writing to:   " + outFile);
-            //System.out.println("writing to:   " + Paths.get(outFile));
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -45,20 +38,6 @@ public class FileUtil {
         String outFile = plaintextFileName + "." + iv_suffix;
         try {
             Files.write(Paths.get(outFile), output);
-            System.out.println(Paths.get(outFile));
-            System.out.println("writing...");
         } catch (Exception e) { e.printStackTrace(); }
     }
-
-    /*public static String getIV(String transformation, String plaintextFileName){
-        String outFile = "";
-        String iv = "";
-        String[] parts = transformation.split("/");
-        if (parts.length == 3 && parts[0].equals("AES")) {
-            outFile = plaintextFileName + ".aes";
-            System.out.println("Aes");
-        }
-        else outFile = plaintextFileName;
-        //return outFile.split(".");
-    }*/
 }

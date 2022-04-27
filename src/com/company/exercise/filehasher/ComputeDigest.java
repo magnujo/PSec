@@ -1,9 +1,9 @@
 package com.company.exercise.filehasher;
 
+import com.company.exercise.FileEncrypterMVC.FileUtil;
 import org.bouncycastle.util.encoders.Hex;
 
 import javax.crypto.Cipher;
-import java.security.MessageDigest;
 
 public class ComputeDigest {
     public static void main(String[] args) {
@@ -17,7 +17,7 @@ public class ComputeDigest {
     void hash(){
         try {
             // reading plaintext file
-            byte [] input = library.FileUtil.readAllBytes(plaintextFileName);
+            byte [] input = FileUtil.readAllBytes(plaintextFileName);
 
             // computing hash value of plaintext
             //MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
@@ -28,7 +28,7 @@ public class ComputeDigest {
 
             // writing hash value to file
             String hashFileName = plaintextFileName;
-            library.FileUtil.write("sha256", hashFileName, hashValue);
+            FileUtil.write("sha256", hashFileName, hashValue);
         } catch (Exception e) { e.printStackTrace(); }
     }
 

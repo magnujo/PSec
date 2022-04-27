@@ -10,6 +10,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+/**
+ * The view where the user logs in. Is only shown if the keystore file is found when the program loads, otherwise
+ * RegisterView is shown.
+ */
+
 public class LoginView extends VBox {
     KeyTool keyTool;
     PasswordField loginPWField;

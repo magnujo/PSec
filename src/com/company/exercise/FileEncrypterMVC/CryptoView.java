@@ -9,6 +9,11 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.Arrays;
 
+/**
+ * Main view of the program containing all the buttons for the cryptographic functions and key management and
+ * the functions they call when pressed.
+ */
+
 public class CryptoView extends HBox {
     CryptoTool cryptoTool;
     String dir = "files";
@@ -17,9 +22,11 @@ public class CryptoView extends HBox {
     KeysBox keysBox;
     CreateKeyBox createKeyBox;
 
+    /**
+     * Constructor setting up all the buttons and some object initialization.
+     */
 
     public CryptoView(CryptoTool cryptoTool, KeyTool keyTool) {
-
         this.cryptoTool = cryptoTool;
         this.keyTool = keyTool;
         fileChooser = new FileChooser();
@@ -30,17 +37,16 @@ public class CryptoView extends HBox {
         setSpacing(10);
         getChildren().add(new EncryptButton());
         getChildren().add(new DecryptButton());
-        //getChildren().add(new EncryptHashButton());
-        //getChildren().add(new DecryptDehashButton());
         getChildren().add(new CreateKeyButton());
         getChildren().add(new DeleteKeyButton());
         setAlignment(Pos.CENTER);
     }
 
+    //The if statements in the following methods are there to make sure there are no weird behavior of the
+    //program when closing using the X button.
     void createKey(){
         createKeyBox.display("New Key", "Enter password for new key");
         if (!createKeyBox.isClosed() && createKeyBox.getPW().length() > 8) {
-            System.out.println("Generating new key");
             keyTool.generateAndAddKey(createKeyBox.getPW(), createKeyBox.getAlias());
             AlertBox.display("Success!", "Key was created successfully");
         }
@@ -93,10 +99,8 @@ public class CryptoView extends HBox {
     }
 
     void close(){
-        System.out.println(Arrays.toString(keyTool.storePW));
         if(keyTool.storePW != null){
             keyTool.store(false);
-            System.out.println("Saving...");
         }
     }
 }

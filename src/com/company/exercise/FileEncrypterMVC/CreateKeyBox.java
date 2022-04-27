@@ -9,6 +9,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+
+
 public class CreateKeyBox {
     Stage window;
     PasswordField pwfield;
@@ -18,9 +20,14 @@ public class CreateKeyBox {
     boolean closed;
     boolean buttonpressed;
 
+    /**
+     * Opens a separate window that helps the user create a key.
+     * General idea and some code in this method is from
+     * https://www.youtube.com/watch?v=SpL3EToqaXA&list=PL6gx4Cwl9DGBzfXLWLSYVy8EbTdpGbUIG&index=5
+     */
+
     public void display(String title, String message){
         closed = false;
-
         window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -38,7 +45,6 @@ public class CreateKeyBox {
             this.alias = aliasfield.getText();
             window.close();
         });
-
 
         VBox layout = new VBox();
         layout.getChildren().addAll(label2, aliasfield, label1, pwfield, savebutton);

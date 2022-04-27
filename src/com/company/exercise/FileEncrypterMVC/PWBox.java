@@ -8,6 +8,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+
+
 public class PWBox {
     Stage window;
     PasswordField pwfield;
@@ -15,6 +17,11 @@ public class PWBox {
     boolean buttonPressed;
     boolean closed;
 
+    /**
+     * Opens a separate window that prompts the user to type a password.
+     * General idea and some code in this method is from
+     * https://www.youtube.com/watch?v=SpL3EToqaXA&list=PL6gx4Cwl9DGBzfXLWLSYVy8EbTdpGbUIG&index=5
+     */
 
     public void display(String title, String message){
         buttonPressed = false;
@@ -34,7 +41,6 @@ public class PWBox {
             window.close();
         });
 
-
         VBox layout = new VBox();
         layout.getChildren().addAll(label1, pwfield, savebutton);
         Scene scene = new Scene(layout);
@@ -42,10 +48,6 @@ public class PWBox {
         window.setScene(scene);
         window.showAndWait();
         if (!buttonPressed) closed = true;
-
-        window.setOnCloseRequest(e -> {
-            System.out.println("Closing PWBox...");
-        });
     }
 
     public String getPW(){
@@ -54,7 +56,4 @@ public class PWBox {
     public boolean isClosed(){
         return closed;
     }
-
-
-
 }

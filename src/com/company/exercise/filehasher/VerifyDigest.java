@@ -1,5 +1,7 @@
 package com.company.exercise.filehasher;
 
+import com.company.exercise.FileEncrypterMVC.FileUtil;
+
 import java.security.MessageDigest;
 
 public class VerifyDigest {
@@ -25,9 +27,9 @@ public class VerifyDigest {
 
             // Verifying hash
             byte[] storedHashValue
-                    = library.FileUtil.readAllBytes(plaintextFileName + ".sha256");
+                    = FileUtil.readAllBytes(plaintextFileName + ".sha256");
             MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
-            digest.update(library.FileUtil.readAllBytes(plaintextFileName));
+            digest.update(FileUtil.readAllBytes(plaintextFileName));
             byte[] computedHashValue = digest.digest();
             if (MessageDigest.isEqual(computedHashValue, storedHashValue)) {
                 System.out.println("Hash values are equal");

@@ -28,6 +28,12 @@ public class KeysBox {
         pwBox = new PWBox();
     }
 
+    /**
+     * Opens a separate window that prompts the user to select a key for encryption or deletion.
+     * General idea and some code in this method is from
+     * https://www.youtube.com/watch?v=SpL3EToqaXA&list=PL6gx4Cwl9DGBzfXLWLSYVy8EbTdpGbUIG&index=5
+     */
+
     public void display(String title, String message, boolean deleteFunction){
         buttonPressed = false;
         closed = false;
@@ -37,14 +43,9 @@ public class KeysBox {
         window.setTitle(title);
         window.setMinWidth(250);
         ArrayList<Button> items = new ArrayList<>();
-        try {
-            keyTool.printContent();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
 
         if (keyTool.size() > 0) {
-            if(deleteFunction) {
+            if(deleteFunction) { //for deleting key
                 try {
                     for (Iterator<String> i = keyTool.getKeyAliases().asIterator(); i.hasNext(); ) {
                         String alias = i.next();
@@ -53,9 +54,7 @@ public class KeysBox {
                             pwBox.display("Enter password", "Enter password for key: " + alias);
                             if (!pwBox.isClosed()) {
                                 buttonPressed = true;
-                                System.out.println("Alias: " + alias);
                                 String pw = pwBox.getPW();
-                                System.out.println("Password: " + pwBox.getPW());
                                 isPWCorrect = keyTool.checkKeyPW(alias, pw);
 
                                 if (isPWCorrect) {
@@ -73,7 +72,7 @@ public class KeysBox {
                 }catch (KeyStoreException e) {e.printStackTrace();}
             }
 
-            else{
+            else{ //for creating key
                 try {
                     for (Iterator<String> i = keyTool.getKeyAliases().asIterator(); i.hasNext(); ) {
                         String alias = i.next();
@@ -83,14 +82,11 @@ public class KeysBox {
                             pwBox.display("Enter password", "Enter password for key: " + alias);
                             if (!pwBox.isClosed()) {
                                 buttonPressed = true;
-                                System.out.println("Alias: " + alias);
                                 String pw = pwBox.getPW();
-                                System.out.println("Password: " + pwBox.getPW());
                                 isPWCorrect = keyTool.checkKeyPW(alias, pw);
 
                                 if (isPWCorrect) {
                                     key = keyTool.getKey(alias, pw);
-                                    System.out.println("Key: " + key.toString());
                                 }
                                 else {
                                     AlertBox.display("Wrong Password", "Wrong Password");
@@ -106,22 +102,15 @@ public class KeysBox {
             }
         }
 
-
         Label label = new Label(message);
-
         VBox layout = new VBox();
         layout.getChildren().add(label);
         layout.getChildren().addAll(items);
         Scene scene = new Scene(layout);
 
-
         window.setScene(scene);
         window.showAndWait();
         if (!buttonPressed) closed = true;
-
-        window.setOnCloseRequest(e -> {
-            System.out.println("Closing keysbox...");
-        });
     }
 
     public boolean isClosed(){
